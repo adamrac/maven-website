@@ -22,23 +22,22 @@ type Frag = {
   x: number; // % of frame width
   y: number; // % of frame height
   r: number; // rotation
-  d: number; // pointer depth
   m?: [number, number]; // position on small screens (hidden there if absent)
 };
 
 const frags: Frag[] = [
-  { text: '“Probably just stress.”', kind: 'note', tone: 'paper', x: 11, y: 30, r: -6, d: 26, m: [30, 63] },
-  { text: 'Tired', kind: 'chip', tone: 'butter', x: 25, y: 52, r: 5, d: 38, m: [82, 65] },
-  { text: 'Day 34??', kind: 'note', tone: 'blush', x: 86, y: 28, r: 7, d: 30, m: [76, 76] },
-  { text: 'Cramps', kind: 'chip', tone: 'blush', x: 75, y: 50, r: -4, d: 42, m: [20, 75] },
-  { text: 'GP, Tues 9:15', kind: 'note', tone: 'butter', x: 8, y: 66, r: 4, d: 22 },
-  { text: 'Can’t sleep', kind: 'chip', tone: 'sky', x: 88, y: 66, r: 6, d: 34, m: [74, 88] },
-  { text: 'Blood test results?', kind: 'note', tone: 'sky', x: 22, y: 84, r: -5, d: 30 },
-  { text: 'Brain fog', kind: 'chip', tone: 'paper', x: 31, y: 70, r: -7, d: 46, m: [26, 89] },
-  { text: 'Headaches', kind: 'chip', tone: 'butter', x: 70, y: 78, r: 5, d: 40 },
-  { text: 'Specialist: 7 month wait', kind: 'note', tone: 'paper', x: 82, y: 88, r: -3, d: 24 },
-  { text: 'Bloated', kind: 'chip', tone: 'sky', x: 12, y: 46, r: 3, d: 36 },
-  { text: 'Moody', kind: 'chip', tone: 'blush', x: 91, y: 44, r: -6, d: 44 },
+  { text: '“Probably just stress.”', kind: 'note', tone: 'paper', x: 11, y: 30, r: -6, m: [30, 63] },
+  { text: 'Tired', kind: 'chip', tone: 'butter', x: 25, y: 52, r: 5, m: [82, 65] },
+  { text: 'Day 34??', kind: 'note', tone: 'blush', x: 86, y: 28, r: 7, m: [76, 76] },
+  { text: 'Cramps', kind: 'chip', tone: 'blush', x: 75, y: 50, r: -4, m: [20, 75] },
+  { text: 'GP, Tues 9:15', kind: 'note', tone: 'butter', x: 8, y: 66, r: 4 },
+  { text: 'Can’t sleep', kind: 'chip', tone: 'sky', x: 88, y: 66, r: 6, m: [74, 88] },
+  { text: 'Blood test results?', kind: 'note', tone: 'sky', x: 22, y: 84, r: -5 },
+  { text: 'Brain fog', kind: 'chip', tone: 'paper', x: 31, y: 70, r: -7, m: [26, 89] },
+  { text: 'Headaches', kind: 'chip', tone: 'butter', x: 70, y: 78, r: 5 },
+  { text: 'Specialist: 7 month wait', kind: 'note', tone: 'paper', x: 82, y: 88, r: -3 },
+  { text: 'Bloated', kind: 'chip', tone: 'sky', x: 12, y: 46, r: 3 },
+  { text: 'Moody', kind: 'chip', tone: 'blush', x: 91, y: 44, r: -6 },
 ];
 
 const found = [
@@ -49,14 +48,13 @@ const found = [
 ---
 
 <section class="hs" id="top" aria-labelledby="hs-title">
-  <div class="hs-frame" data-drift-area>
+  <div class="hs-frame">
     <div class="hs-copy">
       <h1 id="hs-title" class="display hs-title" data-split style="--split-delay:150ms">
         Your body.<br /><span class="hs-line">Finally <span class="swash-word">understood.<svg
             class="swash draw"
             style="--draw-delay:1.1s"
             viewBox="0 0 300 24"
-            preserveAspectRatio="none"
             aria-hidden="true"
             ><path pathLength="1" d="M4 16c60-9 130-13 200-9 30 2 62 5 92 9"></path></svg
           ></span></span>
@@ -74,7 +72,7 @@ const found = [
             class:list={['frag', `frag-${f.kind}`, `frag-${f.tone}`, !f.m && 'frag-wide']}
             style={`--x:${f.x}%;--y:${f.y}%;${f.m ? `--mx:${f.m[0]}%;--my:${f.m[1]}%;` : ''}--r:${f.r}deg;--i:${i}`}
           >
-            <span class="frag-drift" data-drift={f.d}>
+            <span class="frag-drift">
               <span class="frag-bob">
                 {f.kind === 'chip' && <span class="frag-dot" />}
                 {f.text}
@@ -140,7 +138,6 @@ const found = [
     section.classList.add('is-live');
     const frame = section.querySelector<HTMLElement>('.hs-frame')!;
     const screen = section.querySelector<HTMLElement>('.hs-screen')!;
-    const phone = section.querySelector<HTMLElement>('.hs-phone')!;
     const frags = Array.from(section.querySelectorAll<HTMLElement>('.frag'));
     const stages = Array.from(section.querySelectorAll<HTMLElement>('[data-stage]'));
 
@@ -178,7 +175,6 @@ const found = [
 
     function update(now: number) {
       const t = now - t0;
-      let landed = 0;
 
       if (t >= FLY_START) {
         frags.forEach((f, i) => {
@@ -186,14 +182,11 @@ const found = [
           const e = easeIn(k);
           const d = deltas[i];
           if (!d) return;
-          if (k >= 1) landed++;
           f.style.transform = `translate(${(d.dx * e).toFixed(1)}px, ${(d.dy * e).toFixed(1)}px) rotate(${(
             -12 * e
           ).toFixed(2)}deg) scale(${(1 - 0.8 * e).toFixed(3)})`;
           f.style.opacity = String(1 - clamp((k - 0.7) / 0.3));
         });
-        // The phone takes in each piece with a tiny pulse
-        phone.style.scale = String(1 + Math.sin(clamp(landed / n) * Math.PI) * 0.025);
       }
 
       // Then the screen fills in, card by card
@@ -203,10 +196,7 @@ const found = [
         stages.forEach((el, k) => el.classList.toggle('is-on', k <= stage));
       }
 
-      if (t > STAGES[STAGES.length - 1] + 1000) {
-        phone.style.scale = '';
-        done = true;
-      }
+      if (t > STAGES[STAGES.length - 1] + 1000) done = true;
     }
 
     function start() {
@@ -376,15 +366,15 @@ const found = [
   :global(.js-motion) .frag-drift {
     opacity: 0;
     scale: 0.6;
-    transition:
-      opacity 0.6s ease,
-      scale 0.9s var(--ease-spring);
-    transition-delay: calc(0.9s + var(--i) * 80ms);
   }
 
   :global(.js-motion) .hs.is-live .frag-drift {
     opacity: 1;
     scale: 1;
+    transition:
+      opacity 0.6s ease,
+      scale 0.9s var(--ease-spring);
+    transition-delay: calc(0.9s + var(--i) * 80ms);
   }
 
   /* ─────────────────────────────────────────────────────────── phone */
@@ -594,16 +584,16 @@ const found = [
     translate: 0 6cqw;
     scale: 0.94;
     transform-origin: 50% 100%;
-    transition:
-      opacity 0.5s ease,
-      translate 0.8s var(--ease-out),
-      scale 0.8s var(--ease-spring);
   }
 
   .hs.is-live [data-stage].is-on {
     opacity: 1;
     translate: 0 0;
     scale: 1;
+    transition:
+      opacity 0.5s ease,
+      translate 0.8s var(--ease-out),
+      scale 0.8s var(--ease-spring);
   }
 
   @media (prefers-reduced-motion: reduce) {

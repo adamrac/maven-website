@@ -3,7 +3,7 @@
  *
  * The page tells a story top to bottom, and motion is how it paces it:
  *
- *   - Lenis inertial scroll, and one rAF loop every scrubbed effect hangs off
+ *   - one rAF loop every scrubbed effect hangs off (scrolling is native)
  *   - staggered entrance reveals (.reveal), split headlines ([data-split])
  *   - words that brighten as they're scrolled past ([data-scrub])
  *   - a list that lights up line by line ([data-spotlight])
@@ -15,7 +15,6 @@
  * .js-motion class, so if this never runs the page is complete and still.
  */
 
-import Lenis from 'lenis';
 import { APP_STORE_URL, PLAY_STORE_URL } from '../site';
 
 const prefersReduced = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -27,43 +26,15 @@ const ticks: Tick[] = [];
 let vh = window.innerHeight;
 window.addEventListener('resize', () => (vh = window.innerHeight));
 
-/* ----------------------------------------------------------------- scroll */
+/* ------------------------------------------------------------------- loop */
 
-function initSmoothScroll() {
-  const reduced = prefersReduced();
-  const lenis = reduced
-    ? null
-    : new Lenis({
-        duration: 1.1,
-        easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-        smoothWheel: true,
-        touchMultiplier: 1.6,
-      });
-
-  document.querySelectorAll<HTMLAnchorElement>('a[href*="#"]').forEach((a) => {
-    a.addEventListener('click', (e) => {
-      const url = new URL(a.href, window.location.href);
-      if (url.pathname !== window.location.pathname || !url.hash) return;
-      const hash = url.hash;
-      const target = document.querySelector<HTMLElement>(hash);
-      if (!target) return;
-      e.preventDefault();
-      if (lenis) lenis.scrollTo(target, { offset: -72 });
-      else target.scrollIntoView();
-      history.pushState(null, '', hash);
-    });
-  });
-
-  // One loop for everything scrubbed, with or without Lenis.
-  function raf(time: number) {
-    lenis?.raf(time);
+/** One rAF loop for everything scrubbed. Scrolling itself is the browser's. */
+function initLoop() {
+  function raf() {
     for (const t of ticks) t();
     requestAnimationFrame(raf);
   }
   requestAnimationFrame(raf);
-
-  // Lenis owns the scroll, so window.scrollTo() alone won't move the page.
-  (window as unknown as { __lenis?: unknown }).__lenis = lenis;
 }
 
 /* -------------------------------------------------------- split headlines */
@@ -101,6 +72,7 @@ function initSplit() {
     if (!el.getAttribute('aria-label')) el.setAttribute('aria-label', el.textContent?.trim() ?? '');
     walk(el);
     el.querySelectorAll('.split-word').forEach((w) => w.setAttribute('aria-hidden', 'true'));
+    el.classList.add('is-split');
   });
 }
 
@@ -113,7 +85,6 @@ function initReveals() {
     return;
   }
 
-  document.documentElement.classList.add('js-reveal');
 
   const io = new IntersectionObserver(
     (entries) => {
@@ -331,15 +302,18 @@ function initDownloadLinks() {
 
 export function initMotion() {
   initDownloadLinks();
-  initSmoothScroll();
+  initLoop();
   initProgress();
 
   if (prefersReduced()) return;
 
-  document.documentElement.classList.add('js-motion');
+  document.documentElement.classList.add('js-motion', 'js-ready');
   initSplit();
   initScrub();
-  initReveals();
+  // Commit the hidden starting state before anything is revealed, otherwise
+  // the browser never sees a "before" and entrances snap instead of animating.
+  void document.documentElement.offsetHeight;
+  requestAnimationFrame(() => requestAnimationFrame(initReveals));
   initSpotlight();
   initCounts();
   initParallax();

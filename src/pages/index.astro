@@ -282,7 +282,6 @@ const lists = [
               class="mark draw"
               style="--draw-delay:0.9s"
               viewBox="0 0 300 24"
-              preserveAspectRatio="none"
               aria-hidden="true"><path pathLength="1" d="M5 14c55-7 120-11 190-8 35 1 68 5 100 10"></path></svg
             ></span> Let’s sort it out.”
         </blockquote>
@@ -399,7 +398,6 @@ const lists = [
             class="swash draw"
             style="--draw-delay:1s"
             viewBox="0 0 300 24"
-            preserveAspectRatio="none"
             aria-hidden="true"
             ><path pathLength="1" d="M4 16c60-9 130-13 200-9 30 2 62 5 92 9"></path></svg
           ></span>
@@ -988,36 +986,36 @@ const lists = [
   /* The pieces animate in once the card arrives */
   :global(.js-motion) .mock-bars i {
     transform: scaleY(0);
-    transition: transform 0.9s var(--ease-spring);
-    transition-delay: calc(0.5s + var(--i) * 40ms);
   }
 
   :global(.js-motion) :global(.fc.is-in) .mock-bars i {
     transform: none;
+    transition: transform 0.9s var(--ease-spring);
+    transition-delay: calc(0.5s + var(--i) * 40ms);
   }
 
   :global(.js-motion) .mock-list li {
     opacity: 0;
     translate: 0 16px;
+  }
+
+  :global(.js-motion) :global(.fc.is-in) .mock-list li {
+    opacity: 1;
+    translate: 0 0;
     transition:
       opacity 0.5s ease,
       translate 0.8s var(--ease-out);
     transition-delay: calc(0.55s + var(--i) * 120ms);
   }
 
-  :global(.js-motion) :global(.fc.is-in) .mock-list li {
-    opacity: 1;
-    translate: 0 0;
-  }
-
   :global(.js-motion) .mock-line {
     transform: scaleX(0);
     transform-origin: 0 50%;
-    transition: transform 1s var(--ease-out) 0.6s;
   }
 
   :global(.js-motion) :global(.fc.is-in) .mock-line {
     transform: none;
+    transition: transform 1s var(--ease-out) 0.6s;
   }
 
   /* ═════════════════════════════════════════════════════════ download */

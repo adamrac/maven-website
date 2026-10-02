@@ -199,24 +199,24 @@ const max = Math.max(...symptoms.map((s) => s.count));
 
   :global(.js-motion) .rep-bar span {
     width: 0;
-    transition: width 1.4s var(--ease-out);
-    transition-delay: calc(0.4s + var(--i) * 0.12s);
   }
 
   :global(.js-motion) .rep.is-in .rep-bar span {
     width: calc(var(--w) * 100%);
+    transition: width 1.4s var(--ease-out);
+    transition-delay: calc(0.4s + var(--i) * 0.12s);
   }
 
   :global(.js-motion) .rep-stamp {
     scale: 1.8;
     opacity: 0;
-    transition:
-      scale 0.5s var(--ease-spring) 1.3s,
-      opacity 0.2s ease 1.3s;
   }
 
   :global(.js-motion) .rep.is-in .rep-stamp {
     scale: 1;
     opacity: 1;
+    transition:
+      scale 0.5s var(--ease-spring) 1.3s,
+      opacity 0.2s ease 1.3s;
   }
 </style>

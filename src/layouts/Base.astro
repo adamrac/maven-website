@@ -22,6 +22,20 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? 'https://marlohealth
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- Turn on the hidden starting state for entrances before first paint, so
+         nothing flashes and then animates. If the motion script hasn't loaded
+         within 3s, drop it again so the page is never left hidden. -->
+    <script is:inline>
+      (function () {
+        var d = document.documentElement;
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        d.classList.add('js-motion');
+        setTimeout(function () {
+          if (!d.classList.contains('js-ready')) d.classList.remove('js-motion');
+        }, 3000);
+      })();
+    </script>
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical.href} />
