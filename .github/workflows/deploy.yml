@@ -1,0 +1,69 @@
+# Builds the site and publishes it to GitHub Pages on every push to main.
+#
+# The Aloevera font is licensed, so it is not in the repo. It's stored as three
+# repository secrets (FONT_B64_1..3, a base64 string split in three to fit the
+# 48KB secret limit) and rebuilt here before the build. If the secrets are
+# missing, the site still builds and falls back to the next font in the stack.
+
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Restore the licensed font
+        env:
+          FONT_B64_1: ${{ secrets.FONT_B64_1 }}
+          FONT_B64_2: ${{ secrets.FONT_B64_2 }}
+          FONT_B64_3: ${{ secrets.FONT_B64_3 }}
+        run: |
+          if [ -n "$FONT_B64_1" ]; then
+            mkdir -p public/fonts
+            printf '%s%s%s' "$FONT_B64_1" "$FONT_B64_2" "$FONT_B64_3" | base64 -d > public/fonts/Aloevera-Regular.ttf
+            echo "Font restored ($(wc -c < public/fonts/Aloevera-Regular.ttf) bytes)"
+          else
+            echo "::warning::Font secrets not set; building with the fallback font."
+          fi
+
+      - name: Build
+        env:
+          SITE_URL: https://${{ github.repository_owner }}.github.io
+          BASE_PATH: /${{ github.event.repository.name }}
+        run: npm run build
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

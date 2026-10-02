@@ -1,0 +1,716 @@
+---
+import DownloadButton from './DownloadButton.astro';
+
+/**
+ * The hero: thousands of points of light gather into a woman in profile.
+ * Her hair drifts, her heart beats and sends ripples through her, and threads
+ * of light connect mind, heart and body. Particles part around your pointer.
+ * As you scroll, she folds into a single beating heart.
+ *
+ *   Stage A  "Your body. Finally understood."   her
+ *   Stage B  "Every cycle. Every symptom."      the heart
+ *
+ * The section is tall and its inner frame is sticky, so scroll drives the
+ * morph. Canvas 2D with a small spring simulation, no dependencies. Pauses
+ * off screen. With reduced motion it draws the map once and doesn't pin.
+ */
+---
+
+<section class="hf" id="top" aria-labelledby="hf-title">
+  <div class="hf-frame">
+    <canvas class="hf-canvas" aria-hidden="true"></canvas>
+
+    <div class="page hf-inner">
+      <div class="hf-copy hf-a">
+        <h1 id="hf-title" class="display hf-title" data-split style="--split-delay:150ms">
+          Your body.<br />Finally <span class="swash-word">understood.<svg
+              class="swash draw"
+              style="--draw-delay:1.1s"
+              viewBox="0 0 300 24"
+              preserveAspectRatio="none"
+              aria-hidden="true"
+              ><path pathLength="1" d="M4 16c60-9 130-13 200-9 30 2 62 5 92 9"></path></svg
+            ></span>
+        </h1>
+        <p class="lead hf-lead reveal" style="--delay:500ms">
+          Tired of hearing it’s “probably just stress”? Marlo helps you keep track of how you
+          feel, see what’s really going on, and walk into your next appointment ready.
+        </p>
+        <div class="hf-actions reveal" style="--delay:650ms">
+          <DownloadButton size="lg" tone="cream" />
+        </div>
+      </div>
+
+      <div class="hf-copy hf-b" aria-hidden="true">
+        <p class="display hf-title">Every cycle.<br />Every symptom.<br />Finally understood.</p>
+        <p class="lead hf-lead">Marlo is for every woman. Including you.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  /* ───────────────────────────────────────────────────────────── figure ── */
+
+  // A woman in profile, facing right, long hair falling down her back.
+  // Drawn in a 100 × 100 box.
+  const FIGURE: [number, number][] = [
+    [0, 100], [1.5, 92], [4.5, 84], [3.5, 74], [5.5, 64], [4.5, 54], [7, 44], [9.5, 34],
+    [15, 24], [23, 16], [33, 10], [45, 7], [56, 8], [64, 12], [69.5, 19], [72.5, 28],
+    [73.5, 34], [74.5, 38.5], [77, 43], [80.5, 48], [82, 51.5], [79.5, 53.5], [78.2, 55],
+    [80, 57], [79, 58.8], [79.8, 60.8], [77.4, 63], [77, 65.5], [78, 68.5], [75.5, 71.5],
+    [70, 73.5], [66.5, 75.5], [66, 81], [69, 87], [79, 92.5], [90, 97], [92, 100],
+  ];
+  // Her hair: the crown, then everything behind a line from temple to shoulder.
+  const HAIRLINE: [number, number][] = [[66, 15], [57, 19], [50, 24], [46, 40], [42, 60], [38, 80], [36, 100]];
+  const isHair = (x: number, y: number) => {
+    if (y < 15) return true;
+    for (let k = 0; k < HAIRLINE.length - 1; k++) {
+      const [x1, y1] = HAIRLINE[k];
+      const [x2, y2] = HAIRLINE[k + 1];
+      if (y >= y1 && y <= y2) return x < x1 + ((y - y1) / (y2 - y1)) * (x2 - x1);
+    }
+    return false;
+  };
+  // A closed eye: one soft curve.
+  const EYE: [number, number][] = [[64, 41.2], [66.4, 42.8], [69, 43], [71.2, 41.8]];
+  // Where her health connects: mind, eye, throat, heart, belly, crown.
+  const NODES: [number, number][] = [[52, 32], [66, 42], [68, 80], [74, 93], [24, 60], [34, 18]];
+  const HEART_NODE = 3;
+
+  const project = ([x, y]: [number, number]): [number, number] => [
+    0.04 + (x / 100) * 0.92,
+    0.04 + (y / 100) * 0.92,
+  ];
+
+  /* ────────────────────────────────────────────────────────── sampling ── */
+
+  const rand = (() => {
+    let s = 20260614;
+    return () => ((s = (s * 1664525 + 1013904223) >>> 0) / 4294967296);
+  })();
+  const gauss = () => {
+    const u = 1 - rand();
+    const v = rand();
+    return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+  };
+
+  /** Rasterises shapes into a mask so we can test "is this point inside". */
+  function makeMask(draw: (ctx: CanvasRenderingContext2D, S: number) => void) {
+    const S = 400;
+    const c = document.createElement('canvas');
+    c.width = S;
+    c.height = S;
+    const ctx = c.getContext('2d')!;
+    ctx.fillStyle = '#000';
+    draw(ctx, S);
+    const data = ctx.getImageData(0, 0, S, S).data;
+    return (u: number, v: number) => {
+      const x = Math.floor(u * S);
+      const y = Math.floor(v * S);
+      if (x < 0 || y < 0 || x >= S || y >= S) return false;
+      return data[(y * S + x) * 4 + 3] > 128;
+    };
+  }
+
+  function polyPath(ctx: CanvasRenderingContext2D, S: number, pts: [number, number][]) {
+    ctx.beginPath();
+    pts.forEach((p, i) => {
+      const [u, v] = project(p);
+      if (i) ctx.lineTo(u * S, v * S);
+      else ctx.moveTo(u * S, v * S);
+    });
+    ctx.closePath();
+    ctx.fill();
+  }
+
+  function edgePoints(pts: [number, number][], n: number) {
+    const proj = pts.map(project);
+    const segs = proj.map((p, i) => [p, proj[(i + 1) % proj.length]] as const);
+    const lens = segs.map(([a, b]) => Math.hypot(b[0] - a[0], b[1] - a[1]));
+    const total = lens.reduce((s, l) => s + l, 0);
+    const out: [number, number][] = [];
+    for (let k = 0; k < n; k++) {
+      let d = rand() * total;
+      let i = 0;
+      while (d > lens[i]) d -= lens[i++];
+      const [a, b] = segs[i];
+      const t = d / lens[i];
+      out.push([a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t]);
+    }
+    return out;
+  }
+
+  /** Points along an open polyline (in 100-box units). */
+  function linePoints(line: [number, number][], n: number) {
+    const out: [number, number][] = [];
+    for (let k = 0; k < n; k++) {
+      const seg = Math.floor(rand() * (line.length - 1));
+      const t = rand();
+      const a = project(line[seg]);
+      const b = project(line[seg + 1]);
+      out.push([a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t]);
+    }
+    return out;
+  }
+
+  function sampleFigure(n: number) {
+    const inside = makeMask((ctx, S) => polyPath(ctx, S, FIGURE));
+    // kind: 0 skin, 1 hair, 2 eye
+    const pts: { u: number; v: number; kind: number }[] = [];
+    const nEdge = Math.round(n * 0.2);
+    const nHairline = Math.round(n * 0.05);
+    const nEye = Math.round(n * 0.012);
+
+    for (const [u, v] of edgePoints(FIGURE, nEdge)) pts.push({ u, v, kind: 0 });
+    for (const [u, v] of linePoints(HAIRLINE, nHairline)) pts.push({ u, v, kind: 1 });
+    for (const [u, v] of linePoints(EYE, nEye)) pts.push({ u, v, kind: 2 });
+
+    const [ex, ey] = project([67.5, 42.4]);
+    let guard = 0;
+    while (pts.length < n && guard++ < n * 60) {
+      const u = rand();
+      const v = rand();
+      if (!inside(u, v)) continue;
+      // Keep the eye area clear so the closed eye reads.
+      if (Math.hypot(u - ex, v - ey) < 0.03) continue;
+      // Hair is dense; skin is lighter, so the two read apart.
+      const x = ((u - 0.04) / 0.92) * 100;
+      const y = ((v - 0.04) / 0.92) * 100;
+      const hair = isHair(x, y);
+      if (!hair && rand() > 0.45) continue;
+      pts.push({ u, v, kind: hair ? 1 : 0 });
+    }
+    while (pts.length < n) pts.push({ ...pts[Math.floor(rand() * pts.length)] });
+
+    for (const p of pts) {
+      if (p.kind !== 0) continue;
+      const x = ((p.u - 0.04) / 0.92) * 100;
+      const y = ((p.v - 0.04) / 0.92) * 100;
+      if (isHair(x, y)) p.kind = 1;
+    }
+    return pts;
+  }
+
+  function heartXY(t: number): [number, number] {
+    const x = 16 * Math.sin(t) ** 3;
+    const y = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t));
+    // Map roughly [-16,16] × [-12,17] into the unit box with a margin.
+    return [0.5 + x / 40, 0.47 + y / 40];
+  }
+
+  function sampleHeart(n: number) {
+    const inside = makeMask((ctx, S) => {
+      ctx.beginPath();
+      for (let k = 0; k <= 200; k++) {
+        const [u, v] = heartXY((k / 200) * Math.PI * 2);
+        if (k) ctx.lineTo(u * S, v * S);
+        else ctx.moveTo(u * S, v * S);
+      }
+      ctx.fill();
+    });
+    const pts: [number, number][] = [];
+    const nEdge = Math.round(n * 0.22);
+    for (let k = 0; k < nEdge; k++) {
+      const [u, v] = heartXY(rand() * Math.PI * 2);
+      pts.push([u + gauss() * 0.003, v + gauss() * 0.003]);
+    }
+    let guard = 0;
+    while (pts.length < n && guard++ < n * 50) {
+      const u = rand();
+      const v = rand();
+      if (inside(u, v)) pts.push([u, v]);
+    }
+    while (pts.length < n) pts.push(pts[Math.floor(rand() * pts.length)]);
+    return pts;
+  }
+
+  /** Order both shapes by angle so the morph sweeps instead of scattering. */
+  function byAngle<T>(list: T[], get: (t: T) => [number, number]) {
+    let cx = 0,
+      cy = 0;
+    for (const p of list) {
+      const [u, v] = get(p);
+      cx += u;
+      cy += v;
+    }
+    cx /= list.length;
+    cy /= list.length;
+    return list
+      .map((p) => {
+        const [u, v] = get(p);
+        return { p, a: Math.atan2(v - cy, u - cx), r: Math.hypot(u - cx, v - cy) };
+      })
+      .sort((a, b) => a.a - b.a || a.r - b.r)
+      .map((o) => o.p);
+  }
+
+  /* ─────────────────────────────────────────────────────────── the field ── */
+
+  const section = document.querySelector<HTMLElement>('.hf');
+  const canvas = section?.querySelector<HTMLCanvasElement>('.hf-canvas');
+  const ctx = canvas?.getContext('2d');
+
+  if (section && canvas && ctx) {
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const small = window.innerWidth < 720;
+    const N = small ? 1500 : 2800;
+
+    const fig = byAngle(sampleFigure(N), (p) => [p.u, p.v]);
+    const heart = byAngle(sampleHeart(N), (p) => p);
+
+    const AX = new Float32Array(N), AY = new Float32Array(N);
+    const HX = new Float32Array(N), HY = new Float32Array(N);
+    const X = new Float32Array(N), Y = new Float32Array(N);
+    const VX = new Float32Array(N), VY = new Float32Array(N);
+    const SIZE = new Float32Array(N), SEED = new Float32Array(N);
+    const DELAY = new Float32Array(N), GLOW = new Float32Array(N);
+    const KIND = new Uint8Array(N);
+
+    for (let i = 0; i < N; i++) {
+      AX[i] = fig[i].u;
+      AY[i] = fig[i].v;
+      KIND[i] = fig[i].kind;
+      HX[i] = heart[i][0];
+      HY[i] = heart[i][1];
+      SEED[i] = rand();
+      DELAY[i] = rand();
+      SIZE[i] =
+        fig[i].kind === 2 ? 1.25 : (fig[i].kind === 1 ? 0.95 : 0.7) + rand() * rand() * 1.8;
+    }
+
+    const COLORS = {
+      cream: 'rgba(251,244,226,0.92)',
+      creamSoft: 'rgba(251,244,226,0.5)',
+      butter: '#f5dfa0',
+      blush: '#f7b7b7',
+      berry: 'rgba(117,13,50,0.85)',
+    };
+
+    let W = 0, H = 0, DPR = 1;
+    // Where the shape sits on screen: x, y, size (square box).
+    let box = { x: 0, y: 0, s: 1 };
+
+    function layout() {
+      DPR = Math.min(window.devicePixelRatio || 1, 2);
+      const r = canvas!.getBoundingClientRect();
+      W = r.width;
+      H = r.height;
+      canvas!.width = Math.round(W * DPR);
+      canvas!.height = Math.round(H * DPR);
+      ctx!.setTransform(DPR, 0, 0, DPR, 0, 0);
+      if (W >= 992) {
+        // She rises from the bottom edge of the frame
+        const s = Math.min(W * 0.5, H * 0.92);
+        box = { x: W * 0.73 - s / 2, y: H - s * 0.97, s };
+      } else {
+        const s = Math.min(W * 0.92, H * 0.4);
+        box = { x: W / 2 - s / 2, y: H - s * 0.97, s };
+      }
+    }
+
+    function scatter() {
+      for (let i = 0; i < N; i++) {
+        const a = rand() * Math.PI * 2;
+        const d = Math.max(W, H) * (0.55 + rand() * 0.5);
+        X[i] = W / 2 + Math.cos(a) * d;
+        Y[i] = H / 2 + Math.sin(a) * d * 0.8;
+        VX[i] = 0;
+        VY[i] = 0;
+      }
+    }
+
+    /* pointer */
+    let px = -9999, py = -9999, pActive = 0;
+    section.addEventListener('pointermove', (e) => {
+      const r = canvas!.getBoundingClientRect();
+      px = e.clientX - r.left;
+      py = e.clientY - r.top;
+      pActive = 1;
+    });
+    section.addEventListener('pointerleave', () => (pActive = 0));
+
+    /* ripples and arcs between cities */
+    type Ripple = { u: number; v: number; t0: number };
+    type Arc = { a: [number, number]; b: [number, number]; t0: number; done: boolean };
+    const ripples: Ripple[] = [];
+    const arcs: Arc[] = [];
+    const nodeUV = NODES.map(project);
+    const pickNode = () => Math.floor(rand() * NODES.length);
+    let nextEvent = 2600;
+    let lastBeat = -1;
+
+    /* scroll → morph */
+    let morph = 0, morphTarget = 0;
+    const copyA = section.querySelector<HTMLElement>('.hf-a');
+    const copyB = section.querySelector<HTMLElement>('.hf-b');
+    const smooth = (a: number, b: number, x: number) => {
+      const t = Math.min(1, Math.max(0, (x - a) / (b - a)));
+      return t * t * (3 - 2 * t);
+    };
+    function readScroll() {
+      const r = section!.getBoundingClientRect();
+      const travel = r.height - window.innerHeight;
+      const p = travel > 0 ? Math.min(1, Math.max(0, -r.top / travel)) : 0;
+      morphTarget = smooth(0.12, 0.72, p);
+      const a = 1 - smooth(0.08, 0.32, p);
+      const b = smooth(0.55, 0.8, p);
+      section!.style.setProperty('--a', a.toFixed(3));
+      section!.style.setProperty('--b', b.toFixed(3));
+      copyA?.toggleAttribute('inert', a < 0.2);
+      copyB?.setAttribute('aria-hidden', b > 0.5 ? 'false' : 'true');
+    }
+
+    const beat = (t: number) => {
+      // lub-dub, every 1.15s
+      const c = (t % 1150) / 1150;
+      return Math.exp(-((c - 0.08) ** 2) / 0.0012) + 0.6 * Math.exp(-((c - 0.24) ** 2) / 0.0012);
+    };
+
+    const start = performance.now();
+
+    function frame(now: number) {
+      const t = now - start;
+      morph += (morphTarget - morph) * 0.08;
+      const M = morph;
+      const { x: bx, y: by, s: bs } = box;
+      const cxH = bx + bs * 0.5;
+      const cyH = by + bs * 0.47;
+      const pulse = 1 + 0.05 * beat(t) * smooth(0.75, 1, M);
+      const R = small ? 70 : 110;
+
+      /* her heart beats; threads of light connect the dots across her */
+      if (M < 0.3) {
+        const beatIdx = Math.floor(t / 1150);
+        if (beatIdx !== lastBeat && t > 2200) {
+          lastBeat = beatIdx;
+          ripples.push({ u: nodeUV[HEART_NODE][0], v: nodeUV[HEART_NODE][1], t0: t });
+        }
+        if (t > nextEvent) {
+          nextEvent = t + 1100 + rand() * 900;
+          const a = pickNode();
+          let b = pickNode();
+          if (b === a) b = (a + 1) % NODES.length;
+          arcs.push({ a: nodeUV[a], b: nodeUV[b], t0: t, done: false });
+        }
+      }
+
+      ctx!.clearRect(0, 0, W, H);
+
+      /* arcs: "connecting the dots" */
+      const mapAlpha = 1 - smooth(0, 0.35, M);
+      ctx!.lineCap = 'round';
+      for (let k = arcs.length - 1; k >= 0; k--) {
+        const arc = arcs[k];
+        const age = (t - arc.t0) / 1700;
+        if (age > 1.6) {
+          arcs.splice(k, 1);
+          continue;
+        }
+        const ax = bx + arc.a[0] * bs, ay = by + arc.a[1] * bs;
+        const bxp = bx + arc.b[0] * bs, byp = by + arc.b[1] * bs;
+        const mx = (ax + bxp) / 2, my = (ay + byp) / 2;
+        const len = Math.hypot(bxp - ax, byp - ay);
+        const cx = mx - len * 0.25, cy = my - len * 0.2;
+        const head = Math.min(1, age);
+        const tail = Math.max(0, age - 0.6);
+        const alpha = mapAlpha * (1 - smooth(1, 1.6, age));
+        if (alpha <= 0.01) continue;
+        ctx!.strokeStyle = `rgba(245,223,160,${(0.75 * alpha).toFixed(3)})`;
+        ctx!.lineWidth = 1.6;
+        ctx!.beginPath();
+        for (let s = 0; s <= 28; s++) {
+          const u = tail + (head - tail) * (s / 28);
+          const qx = (1 - u) * (1 - u) * ax + 2 * (1 - u) * u * cx + u * u * bxp;
+          const qy = (1 - u) * (1 - u) * ay + 2 * (1 - u) * u * cy + u * u * byp;
+          if (s) ctx!.lineTo(qx, qy);
+          else ctx!.moveTo(qx, qy);
+        }
+        ctx!.stroke();
+        if (age < 1) {
+          const u = head;
+          const qx = (1 - u) * (1 - u) * ax + 2 * (1 - u) * u * cx + u * u * bxp;
+          const qy = (1 - u) * (1 - u) * ay + 2 * (1 - u) * u * cy + u * u * byp;
+          ctx!.fillStyle = `rgba(251,244,226,${alpha.toFixed(3)})`;
+          ctx!.beginPath();
+          ctx!.arc(qx, qy, 3, 0, Math.PI * 2);
+          ctx!.fill();
+        } else if (!arc.done) {
+          arc.done = true;
+          ripples.push({ u: arc.b[0], v: arc.b[1], t0: t });
+        }
+      }
+
+      /* ripples */
+      for (let k = ripples.length - 1; k >= 0; k--) {
+        const rp = ripples[k];
+        const age = (t - rp.t0) / 1400;
+        if (age > 1) {
+          ripples.splice(k, 1);
+          continue;
+        }
+        const rx = bx + rp.u * bs, ry = by + rp.v * bs;
+        const rad = 6 + age * bs * 0.16;
+        ctx!.strokeStyle = `rgba(247,183,183,${((1 - age) * 0.8 * mapAlpha).toFixed(3)})`;
+        ctx!.lineWidth = 1.5;
+        ctx!.beginPath();
+        ctx!.arc(rx, ry, rad, 0, Math.PI * 2);
+        ctx!.stroke();
+        // light up the women near the wavefront
+        const r2o = (rad + 8) ** 2, r2i = Math.max(0, rad - 10) ** 2;
+        for (let i = 0; i < N; i++) {
+          const dx = X[i] - rx, dy = Y[i] - ry;
+          const d2 = dx * dx + dy * dy;
+          if (d2 < r2o && d2 > r2i) GLOW[i] = 1;
+        }
+      }
+
+      /* the particles */
+      const groups: number[][] = [[], [], [], [], []];
+      for (let i = 0; i < N; i++) {
+        const release = 250 + DELAY[i] * 1500;
+        const m = Math.min(1, Math.max(0, (M - DELAY[i] * 0.3) / 0.7));
+        const me = m * m * (3 - 2 * m);
+
+        const ax = bx + AX[i] * bs, ay = by + AY[i] * bs;
+        const hx = cxH + (HX[i] * bs + bx - cxH) * pulse;
+        const hy = cyH + (HY[i] * bs + by - cyH) * pulse;
+        let tx = ax + (hx - ax) * me;
+        let ty = ay + (hy - ay) * me;
+
+        // her hair moves, as if in a light breeze
+        if (KIND[i] === 1) {
+          const flow = (1 - me) * bs * 0.014 * (1 - AX[i]);
+          tx += Math.sin(t * 0.0013 + AY[i] * 9 + SEED[i]) * flow;
+          ty += Math.cos(t * 0.0009 + AY[i] * 7) * flow * 0.4;
+        }
+
+        // a swirl mid-morph, and a constant gentle breath
+        const sw = Math.sin(me * Math.PI) * bs * 0.16;
+        const ang = SEED[i] * Math.PI * 2 + t * 0.0004;
+        tx += Math.cos(ang) * sw + Math.sin(t * 0.0012 + SEED[i] * 40) * 1.3;
+        ty += Math.sin(ang) * sw + Math.cos(t * 0.001 + SEED[i] * 30) * 1.3;
+
+        if (t > release) {
+          VX[i] = (VX[i] + (tx - X[i]) * 0.04) * 0.86;
+          VY[i] = (VY[i] + (ty - Y[i]) * 0.04) * 0.86;
+        } else {
+          VX[i] *= 0.98;
+          VY[i] *= 0.98;
+        }
+
+        // part around the pointer
+        if (pActive) {
+          const dx = X[i] - px, dy = Y[i] - py;
+          const d2 = dx * dx + dy * dy;
+          if (d2 < R * R && d2 > 0.01) {
+            const d = Math.sqrt(d2);
+            const f = (1 - d / R) * 2.4;
+            VX[i] += (dx / d) * f;
+            VY[i] += (dy / d) * f;
+            GLOW[i] = Math.max(GLOW[i], (1 - d / R) * 0.9);
+          }
+        }
+
+        X[i] += VX[i];
+        Y[i] += VY[i];
+        GLOW[i] *= 0.955;
+
+        // colour: glow → blush, cities → butter, heart → cream/blush
+        let g: number;
+        if (GLOW[i] > 0.35) g = 3;
+        else if (me > 0.6) g = SEED[i] < 0.3 ? 3 : 0;
+        else if (KIND[i] === 2) g = 4;
+        else if (KIND[i] === 1) g = SEED[i] < 0.6 ? 4 : SEED[i] < 0.85 ? 3 : 2;
+        else g = SEED[i] < 0.4 ? 1 : 0;
+        groups[g].push(i);
+      }
+
+      const fills = [COLORS.cream, COLORS.creamSoft, COLORS.butter, COLORS.blush, COLORS.berry];
+      for (let g = 0; g < 5; g++) {
+        ctx!.fillStyle = fills[g];
+        ctx!.beginPath();
+        for (const i of groups[g]) {
+          const s = SIZE[i] * (1 + GLOW[i] * 0.8);
+          ctx!.moveTo(X[i] + s, Y[i]);
+          ctx!.arc(X[i], Y[i], s, 0, Math.PI * 2);
+        }
+        ctx!.fill();
+      }
+
+      /* a soft halo where the pointer is */
+      if (pActive) {
+        ctx!.fillStyle = 'rgba(251,244,226,0.06)';
+        ctx!.beginPath();
+        ctx!.arc(px, py, R * 0.7, 0, Math.PI * 2);
+        ctx!.fill();
+      }
+    }
+
+    /* drive it */
+    layout();
+    if (reduced) {
+      // One still frame of the map: everyone already home.
+      for (let i = 0; i < N; i++) {
+        X[i] = box.x + AX[i] * box.s;
+        Y[i] = box.y + AY[i] * box.s;
+      }
+      const still = () => {
+        layout();
+        for (let i = 0; i < N; i++) {
+          X[i] = box.x + AX[i] * box.s;
+          Y[i] = box.y + AY[i] * box.s;
+          VX[i] = VY[i] = 0;
+        }
+        frame(start + 10_000_000);
+      };
+      nextEvent = Infinity;
+      still();
+      window.addEventListener('resize', still);
+    } else {
+      scatter();
+      section.classList.add('is-live');
+      let visible = true;
+      new IntersectionObserver(([e]) => (visible = e.isIntersecting)).observe(section);
+      window.addEventListener('resize', layout);
+      // Step the simulation at 60Hz whatever the display refresh, so a
+      // 120Hz screen doesn't run the springs at double speed.
+      let last = performance.now();
+      let acc = 0;
+      let simTime = 0;
+      const loop = (now: number) => {
+        if (visible) {
+          readScroll();
+          acc = Math.min(acc + (now - last), 100);
+          // Each step clears and redraws, so only the last of a burst shows.
+          while (acc >= 16.67) {
+            simTime += 16.67;
+            acc -= 16.67;
+            frame(start + simTime);
+          }
+        } else acc = 0;
+        last = now;
+        requestAnimationFrame(loop);
+      };
+      requestAnimationFrame(loop);
+    }
+  }
+</script>
+
+<style>
+  .hf {
+    --inset: clamp(0.5rem, 0.3rem + 0.6vw, 0.9rem);
+    --a: 1;
+    --b: 0;
+    position: relative;
+    color: var(--cream);
+  }
+
+  /* Tall section, sticky frame: scrolling drives the morph. */
+  :global(.js-motion) .hf {
+    height: 210vh;
+  }
+
+  /* An inset, rounded frame, with the floating nav sitting over its top. */
+  .hf-frame {
+    position: sticky;
+    top: var(--inset);
+    height: max(36rem, calc(100svh - var(--inset) * 2));
+    margin-inline: var(--inset);
+    border-radius: clamp(24px, 1rem + 1.5vw, 40px);
+    background: var(--clay);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    padding-top: 4.5rem;
+    isolation: isolate;
+  }
+
+  .hf-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    touch-action: pan-y;
+  }
+
+  .hf-inner {
+    position: relative;
+    width: 100%;
+    pointer-events: none;
+  }
+
+  .hf-copy {
+    max-width: 38rem;
+    pointer-events: auto;
+  }
+
+  @media (min-width: 62rem) {
+    .hf-copy {
+      max-width: 46%;
+    }
+  }
+
+  @media (max-width: 61.99rem) {
+    .hf-frame {
+      align-items: flex-start;
+      padding-top: clamp(6rem, 12vh, 7.5rem);
+    }
+  }
+
+  .hf-a {
+    opacity: var(--a);
+    translate: 0 calc((1 - var(--a)) * -40px);
+    filter: blur(calc((1 - var(--a)) * 6px));
+  }
+
+  .hf-b {
+    position: absolute;
+    top: 50%;
+    left: var(--gutter);
+    right: var(--gutter);
+    translate: 0 calc(-50% + (1 - var(--b)) * 40px);
+    opacity: var(--b);
+    filter: blur(calc((1 - var(--b)) * 6px));
+    pointer-events: none;
+  }
+
+  @media (max-width: 61.99rem) {
+    .hf-b {
+      top: 0.25rem;
+      translate: 0 calc((1 - var(--b)) * 40px);
+    }
+  }
+
+  .hf-a .hf-title {
+    font-size: clamp(2.8rem, 1rem + 5.6vw, 6.4rem);
+  }
+
+  .hf-b .hf-title {
+    line-height: 0.98;
+  }
+
+  .hf-b .hf-title {
+    font-size: clamp(2.2rem, 1rem + 3.8vw, 4.6rem);
+  }
+
+  .hf-lead {
+    margin-top: 1.75rem;
+    color: rgba(251, 244, 226, 0.9);
+    max-width: 33rem;
+  }
+
+  .hf-actions {
+    margin-top: 2.25rem;
+  }
+
+  .hf :global(:focus-visible) {
+    outline-color: var(--butter);
+  }
+
+  /* Without motion there's no scroll stage, so the heart copy stays away. */
+  :global(html:not(.js-motion)) .hf-b {
+    display: none;
+  }
+
+</style>

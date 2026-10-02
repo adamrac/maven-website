@@ -1,0 +1,22 @@
+---
+/** Minimal line glyphs, inline so there's no icon-font dependency. */
+interface Props {
+  name: 'pulse' | 'face' | 'drop' | 'moon' | 'chart' | 'heart' | 'shield' | 'doc' | 'bell';
+}
+const { name } = Astro.props;
+
+const paths: Record<Props['name'], string> = {
+  pulse: '<path d="M2 12h4l3-8 4 16 3-8h6"/>',
+  face: '<circle cx="12" cy="12" r="9"/><path d="M8.5 14.5a5 5 0 0 0 7 0"/><path d="M9 9.5h.01M15 9.5h.01"/>',
+  drop: '<path d="M12 3s6 6.4 6 10.4A6 6 0 0 1 6 13.4C6 9.4 12 3 12 3Z"/>',
+  moon: '<path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z"/>',
+  chart: '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
+  heart:
+    '<path d="M12 20s-7-4.6-7-9.3A4 4 0 0 1 12 8a4 4 0 0 1 7-2.7c0 4.7-7 9.3-7 9.3Z" transform="translate(0 1)"/>',
+  shield: '<path d="M12 3 20 6v6c0 5-3.4 8-8 9-4.6-1-8-4-8-9V6l8-3Z"/><path d="M9 12.5l2 2 4-4.5"/>',
+  doc: '<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8Z"/><path d="M14 3v5h5M9 13h6M9 17h4"/>',
+  bell: '<path d="M18 16V11a6 6 0 1 0-12 0v5l-2 3h16Z"/><path d="M10 22h4"/>',
+};
+---
+
+<svg viewBox="0 0 24 24" aria-hidden="true" set:html={paths[name]}></svg>

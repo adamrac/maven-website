@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.astro/
+.env
+.env.production
+.DS_Store
+*.log
+
+# Licensed font: never committed. Restored from repo secrets at deploy.
+public/fonts/Aloevera-Regular.ttf

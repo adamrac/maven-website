@@ -1,0 +1,206 @@
+---
+import Wordmark from './Wordmark.astro';
+import InclusivityFlags from './InclusivityFlags.astro';
+import { withBase } from '../site';
+
+const year = new Date().getFullYear();
+
+const columns = [
+  {
+    title: 'Marlo',
+    links: [
+      { href: withBase('/#story'), label: 'Is this you?' },
+      { href: withBase('/#meet'), label: 'How Marlo helps' },
+      { href: withBase('/#how'), label: 'How it works' },
+    ],
+  },
+  {
+    title: 'The app',
+    links: [
+      { href: withBase('/#report'), label: 'Your health summary' },
+      { href: withBase('/#inside'), label: 'What’s inside' },
+      { href: withBase('/#download'), label: 'Download the app' },
+    ],
+  },
+  {
+    title: 'Your safety',
+    links: [{ href: withBase('/#safe'), label: 'Safety & privacy' }],
+  },
+];
+---
+
+<footer class="footer">
+  <div class="page">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <Wordmark size={44} tint="cream" />
+        <p class="lead footer-tag">Your body. Finally understood.</p>
+      </div>
+
+      <nav class="footer-nav" aria-label="Footer">
+        {
+          columns.map((col) => (
+            <div>
+              <h2 class="overline footer-col-title">{col.title}</h2>
+              <ul class="footer-list">
+                {col.links.map((l) => (
+                  <li>
+                    <a href={l.href}>{l.label}</a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))
+        }
+      </nav>
+    </div>
+
+    <hr class="footer-rule" />
+
+    <div class="footer-statements">
+      <section class="footer-statement">
+        <h2 class="overline footer-col-title">Acknowledgement of Country</h2>
+        <p class="small muted">
+          Marlo acknowledges the Traditional Custodians of the lands on which we live and work, and
+          pays respect to Elders past and present. We recognise that sovereignty was never ceded,
+          and that Aboriginal and Torres Strait Islander peoples have cared for health and Country
+          for more than 60,000 years.
+        </p>
+      </section>
+
+      <section class="footer-statement">
+        <h2 class="overline footer-col-title">Everyone belongs here</h2>
+        <p class="small muted">
+          Marlo is for every woman and every body, whatever your age, culture, gender identity,
+          sexuality, ability or story. You belong here exactly as you are.
+        </p>
+        <InclusivityFlags tint="cream" />
+      </section>
+    </div>
+
+    <hr class="footer-rule" />
+
+    <div class="footer-base">
+      <p class="caption footer-disclaimer">
+        Marlo helps you understand and organise your health information. It doesn’t diagnose,
+        treat, or give personal medical advice, so please talk to your doctor about diagnosis and
+        treatment. Marlo isn’t an emergency service. In an emergency, call <strong>000</strong>.
+        For support any time: Lifeline
+        <strong>13 11 14</strong> · 1800RESPECT <strong>1800 737 732</strong> · 13YARN
+        <strong>13 92 76</strong>.
+      </p>
+      <div class="footer-meta">
+        <p class="caption">© {year} Marlo. Australian owned and built.</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    background: var(--berry);
+    color: var(--ink-inverse);
+    padding-block: clamp(3rem, 2rem + 4vw, 5.5rem) 2.5rem;
+  }
+
+  .footer .muted {
+    color: var(--ink-inverse-muted);
+  }
+
+  .footer-top {
+    display: grid;
+    gap: var(--s-3xl);
+  }
+
+  @media (min-width: 56rem) {
+    .footer-top {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+      gap: var(--s-4xl);
+    }
+  }
+
+  .footer-tag {
+    font-family: var(--font-display);
+    font-weight: var(--display-weight);
+    line-height: 1.1;
+    margin-top: 0.5rem;
+    max-width: 18rem;
+  }
+
+  .footer-nav {
+    display: grid;
+    gap: var(--s-2xl);
+    grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+  }
+
+  .footer-col-title {
+    color: var(--sky);
+    margin-bottom: 1rem;
+  }
+
+  .footer-list {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: 0.6rem;
+  }
+
+  .footer-list a {
+    text-decoration: none;
+    font-size: var(--t-small);
+    color: var(--ink-inverse-muted);
+  }
+
+  .footer-list a:hover {
+    color: var(--cream);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+
+  .footer-rule {
+    border-top-color: var(--line-inverse);
+    margin-block: clamp(2rem, 1.5rem + 2vw, 3.25rem);
+  }
+
+  .footer-statements {
+    display: grid;
+    gap: var(--s-2xl);
+  }
+
+  @media (min-width: 56rem) {
+    .footer-statements {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--s-4xl);
+    }
+  }
+
+  .footer-statement p {
+    max-width: 34rem;
+  }
+
+  .footer-base {
+    display: grid;
+    gap: var(--s-xl);
+  }
+
+  .footer-disclaimer {
+    color: var(--ink-inverse-muted);
+    max-width: 48rem;
+  }
+
+  .footer-disclaimer strong {
+    color: var(--cream);
+  }
+
+  .footer-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem var(--s-xl);
+    justify-content: space-between;
+    color: var(--ink-inverse-muted);
+  }
+
+  .footer-meta .caption {
+    color: var(--ink-inverse-muted);
+  }
+</style>

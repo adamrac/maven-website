@@ -1,0 +1,41 @@
+---
+import Waitlist from './Waitlist.astro';
+
+interface Props {
+  overline?: string;
+  title?: string;
+  lead?: string;
+}
+const {
+  overline = 'Seen. Believed. Supported.',
+  title = 'Be first through the door.',
+  lead = 'Marlo is in build. Leave your email and we’ll tell you the day it opens — one message, from a real person, with nothing else attached.',
+} = Astro.props;
+---
+
+<section class="cta on-berry" id="waitlist">
+  <div class="page cta-inner">
+    <p class="overline">{overline}</p>
+    <h2 class="display cta-title">{title}</h2>
+    <p class="lead cta-lead">{lead}</p>
+    <Waitlist />
+  </div>
+</section>
+
+<style>
+  .cta {
+    padding-block: clamp(4rem, 2rem + 8vw, 9rem);
+  }
+  .cta-inner {
+    max-width: 50rem;
+  }
+  .cta-title {
+    margin-top: 1.5rem;
+    font-size: clamp(2.4rem, 1.3rem + 4.6vw, 5.2rem);
+  }
+  .cta-lead {
+    margin-top: 1.75rem;
+    margin-bottom: 2.5rem;
+    color: var(--ink-inverse-muted);
+  }
+</style>

@@ -1,0 +1,222 @@
+---
+/**
+ * An illustrative health summary: the one page you hand your GP.
+ * The figures are an example.
+ */
+const stats = [
+  { n: 142, label: 'check-ins' },
+  { n: 26, to: 34, label: 'days between periods' },
+  { n: 6.1, label: 'hours sleep a night', dec: true },
+];
+
+const symptoms = [
+  { name: 'Fatigue', count: 18 },
+  { name: 'Pelvic pain', count: 11 },
+  { name: 'Headache', count: 7 },
+  { name: 'Bloating', count: 5 },
+];
+const max = Math.max(...symptoms.map((s) => s.count));
+---
+
+<figure class="rep" data-inview>
+  <div class="rep-paper">
+    <header class="rep-head">
+      <div>
+        <p class="rep-k">Your health summary</p>
+        <p class="rep-t">Last 3 months</p>
+      </div>
+      <span class="rep-stamp">For your GP</span>
+    </header>
+
+    <div class="rep-stats">
+      {
+        stats.map((s) => (
+          <div class="rep-stat">
+            <p class="rep-n numeral">
+              {s.dec ? (
+                s.n
+              ) : (
+                <span data-count={s.n}>{s.n}</span>
+              )}
+              {s.to && <>–<span data-count={s.to} data-count-delay="150">{s.to}</span></>}
+            </p>
+            <p class="rep-l">{s.label}</p>
+          </div>
+        ))
+      }
+    </div>
+
+    <p class="rep-sub">What you noted most</p>
+    <ul class="rep-bars">
+      {
+        symptoms.map((s, i) => (
+          <li style={`--w:${(s.count / max).toFixed(3)};--i:${i}`}>
+            <span class="rep-name">{s.name}</span>
+            <span class="rep-bar"><span /></span>
+            <span class="rep-c numeral">{s.count}×</span>
+          </li>
+        ))
+      }
+    </ul>
+
+    <p class="rep-note">
+      Most of these show up in <strong>the week before your period</strong>. Worth mentioning to
+      your GP.
+    </p>
+  </div>
+</figure>
+
+<style>
+  .rep {
+    margin: 0;
+    width: min(100%, 27rem);
+    margin-inline: auto;
+  }
+
+  .rep-paper {
+    background: var(--paper);
+    border-radius: 22px;
+    padding: clamp(1.4rem, 1rem + 1.5vw, 2.1rem);
+    box-shadow:
+      0 30px 60px -30px rgba(90, 9, 38, 0.35),
+      0 0 0 1px var(--line);
+    rotate: -2deg;
+    transition: rotate 0.8s var(--ease-out);
+  }
+
+  .rep:hover .rep-paper {
+    rotate: 0deg;
+  }
+
+  .rep-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    padding-bottom: 1.1rem;
+    border-bottom: 1.5px dashed var(--line-strong);
+  }
+
+  .rep-k {
+    font-size: var(--t-overline);
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--clay);
+  }
+
+  .rep-t {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    line-height: 1.1;
+    margin-top: 0.3rem;
+  }
+
+  .rep-stamp {
+    font-size: var(--t-caption);
+    font-weight: 700;
+    padding: 0.35rem 0.75rem;
+    border-radius: 99px;
+    border: 1.5px solid var(--clay);
+    color: var(--clay);
+    rotate: 6deg;
+    white-space: nowrap;
+  }
+
+  .rep-stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.75rem;
+    padding-block: 1.25rem;
+  }
+
+  .rep-n {
+    font-size: clamp(1.5rem, 1.1rem + 1.4vw, 2.1rem);
+    line-height: 1;
+    color: var(--clay);
+    white-space: nowrap;
+  }
+
+  .rep-l {
+    font-size: var(--t-caption);
+    line-height: 1.3;
+    margin-top: 0.4rem;
+    color: var(--ink-muted);
+  }
+
+  .rep-sub {
+    font-size: var(--t-caption);
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+  }
+
+  .rep-bars {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: 0.6rem;
+  }
+
+  .rep-bars li {
+    display: grid;
+    grid-template-columns: 5.6rem 1fr 2rem;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: var(--t-small);
+  }
+
+  .rep-bar {
+    height: 0.6rem;
+    border-radius: 99px;
+    background: var(--berry-tint);
+    overflow: hidden;
+  }
+
+  .rep-bar span {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: var(--blush);
+    width: calc(var(--w) * 100%);
+  }
+
+  .rep-bars li:first-child .rep-bar span {
+    background: var(--clay);
+  }
+
+  .rep-c {
+    text-align: right;
+  }
+
+  .rep-note {
+    margin-top: 1.25rem;
+    padding: 0.9rem 1rem;
+    border-radius: 14px;
+    background: var(--sky);
+    font-size: var(--t-small);
+    line-height: 1.45;
+  }
+
+  :global(.js-motion) .rep-bar span {
+    width: 0;
+    transition: width 1.4s var(--ease-out);
+    transition-delay: calc(0.4s + var(--i) * 0.12s);
+  }
+
+  :global(.js-motion) .rep.is-in .rep-bar span {
+    width: calc(var(--w) * 100%);
+  }
+
+  :global(.js-motion) .rep-stamp {
+    scale: 1.8;
+    opacity: 0;
+    transition:
+      scale 0.5s var(--ease-spring) 1.3s,
+      opacity 0.2s ease 1.3s;
+  }
+
+  :global(.js-motion) .rep.is-in .rep-stamp {
+    scale: 1;
+    opacity: 1;
+  }
+</style>

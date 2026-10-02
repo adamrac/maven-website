@@ -1,0 +1,69 @@
+---
+/**
+ * The "Marlo." wordmark.
+ *
+ * From the deck cover: the word is set in the display face, and the full stop
+ * is a separate colour - blush against cream, clay against berry. It is part
+ * of the mark and is never removed.
+ *
+ * Minimum width 120px digital; clear space equal to the height of the "o".
+ */
+interface Props {
+  size?: number;
+  /** Colour of the word itself. The dot picks its own accent to suit. */
+  tint?: 'berry' | 'cream' | 'clay' | 'sky';
+  dot?: 'blush' | 'clay' | 'sky' | 'butter';
+  monogram?: boolean;
+  as?: 'span' | 'div';
+  class?: string;
+}
+
+const {
+  size = 38,
+  tint = 'berry',
+  dot = 'blush',
+  monogram = false,
+  as: Tag = 'div',
+  class: className = '',
+} = Astro.props;
+
+const tints = {
+  berry: 'var(--berry)',
+  cream: 'var(--cream)',
+  clay: 'var(--clay)',
+  sky: 'var(--sky)',
+};
+
+const dots = {
+  blush: 'var(--blush)',
+  clay: 'var(--clay)',
+  sky: 'var(--sky)',
+  butter: 'var(--butter)',
+};
+---
+
+<Tag
+  class:list={['wm', className]}
+  style={`--wm-size:${size}px; --wm-color:${tints[tint]}; --wm-dot:${dots[dot]};`}
+  aria-label="Marlo"
+>
+  <span aria-hidden="true">{monogram ? 'M' : 'Marlo'}<span class="wm-dot">.</span></span>
+</Tag>
+
+<style>
+  .wm {
+    font-family: var(--font-display);
+    font-weight: var(--display-weight);
+    font-size: var(--wm-size);
+    line-height: 1;
+    letter-spacing: -0.035em;
+    color: var(--wm-color);
+    padding: 0.5em 0;
+    display: inline-block;
+    white-space: nowrap;
+  }
+
+  .wm-dot {
+    color: var(--wm-dot);
+  }
+</style>

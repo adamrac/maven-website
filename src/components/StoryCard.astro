@@ -1,0 +1,210 @@
+---
+import Icon from './Icon.astro';
+import type { IconName } from './icons';
+
+/**
+ * The app's signature card: a big rounded block of brand colour, a white
+ * circular icon badge top-left, an organic blob bleeding out of the top-right
+ * corner, and the headline + body sitting at the bottom.
+ *
+ * Lifted directly from the Marlo onboarding carousel.
+ */
+export type CardTone = 'clay' | 'berry' | 'butter' | 'blush' | 'sky';
+
+interface Props {
+  tone: CardTone;
+  /** The blob in the corner - an adjacent brand colour. */
+  blob?: 'clay' | 'berry' | 'butter' | 'blush' | 'sky' | 'cream';
+  icon?: IconName;
+  kicker?: string;
+  title: string;
+  body: string;
+  class?: string;
+}
+
+const {
+  tone,
+  blob = 'cream',
+  icon = 'heart',
+  kicker,
+  title,
+  body,
+  class: className = '',
+} = Astro.props;
+
+// Cream text on the dark tones, berry on the light ones.
+const dark = tone === 'clay' || tone === 'berry';
+---
+
+<article class:list={['card', `card-${tone}`, dark && 'is-dark', className]}>
+  <span class:list={['card-blob', `blob-${blob}`]} aria-hidden="true"></span>
+
+  <span class="card-badge" aria-hidden="true">
+    <Icon name={icon} />
+  </span>
+
+  <div class="card-copy">
+    {kicker && <p class="card-kicker">{kicker}</p>}
+    <h3 class="card-title">{title}</h3>
+    <p class="card-body">{body}</p>
+  </div>
+</article>
+
+<style>
+  .card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 28px;
+    padding: clamp(1.5rem, 1rem + 1.6vw, 2.25rem);
+    min-height: clamp(21rem, 17rem + 12vw, 29rem);
+    display: flex;
+    flex-direction: column;
+    isolation: isolate;
+  }
+
+  .card-clay {
+    background: var(--clay);
+  }
+  .card-berry {
+    background: var(--berry);
+  }
+  .card-butter {
+    background: var(--butter);
+  }
+  .card-blush {
+    background: var(--blush);
+  }
+  .card-sky {
+    background: var(--sky);
+  }
+
+  /* Organic blob bleeding out of the top-right corner */
+  .card-blob {
+    position: absolute;
+    top: -22%;
+    right: -14%;
+    width: 58%;
+    aspect-ratio: 1;
+    border-radius: 52% 48% 44% 56% / 50% 54% 46% 50%;
+    z-index: -1;
+    opacity: 0.85;
+  }
+
+  .blob-clay {
+    background: var(--clay);
+  }
+  .blob-berry {
+    background: var(--berry);
+  }
+  .blob-butter {
+    background: var(--butter);
+  }
+  .blob-blush {
+    background: var(--blush);
+  }
+  .blob-sky {
+    background: var(--sky);
+  }
+  .blob-cream {
+    background: rgba(251, 244, 226, 0.4);
+  }
+
+  .card-badge {
+    width: clamp(3.2rem, 2.6rem + 1.6vw, 4.2rem);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: var(--paper);
+    color: var(--berry);
+    display: grid;
+    place-items: center;
+    padding: 1rem;
+    flex-shrink: 0;
+  }
+
+  .card-copy {
+    margin-top: auto;
+    padding-top: 3rem;
+  }
+
+  .card-kicker {
+    font-size: var(--t-overline);
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 0.9rem;
+    color: var(--berry);
+    opacity: 0.65;
+  }
+
+  .card-title {
+    font-family: var(--font-display);
+    font-weight: var(--display-weight);
+    font-size: clamp(1.5rem, 1.2rem + 1.5vw, 2.3rem);
+    line-height: 1.04;
+    letter-spacing: -0.02em;
+    color: var(--berry);
+    text-wrap: balance;
+  }
+
+  .card-body {
+    margin-top: 0.85rem;
+    font-size: var(--t-small);
+    line-height: 1.55;
+    color: var(--berry);
+    opacity: 0.82;
+    max-width: 32ch;
+  }
+
+  /* Hover: the card lifts, the blob swells and reshapes, the badge says hello */
+  .card {
+    transition:
+      transform 0.6s var(--ease-out),
+      box-shadow 0.6s var(--ease-out);
+  }
+
+  .card-blob {
+    transition:
+      transform 0.9s var(--ease-out),
+      border-radius 0.9s var(--ease-out);
+  }
+
+  .card-badge {
+    transition: transform 0.5s var(--ease-spring);
+  }
+
+  @media (hover: hover) {
+    .card:hover {
+      transform: translateY(-6px) rotate(-0.4deg);
+      box-shadow: 0 24px 50px -24px rgba(90, 9, 38, 0.35);
+    }
+
+    .card:hover .card-blob {
+      transform: scale(1.35) translate(-6%, 6%);
+      border-radius: 42% 58% 60% 40% / 56% 40% 60% 44%;
+    }
+
+    .card:hover .card-badge {
+      transform: rotate(-10deg) scale(1.08);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .card,
+    .card-blob,
+    .card-badge {
+      transition: none;
+    }
+    .card:hover,
+    .card:hover .card-blob,
+    .card:hover .card-badge {
+      transform: none;
+    }
+  }
+
+  /* Dark tones flip the text to cream */
+  .is-dark .card-title,
+  .is-dark .card-body,
+  .is-dark .card-kicker {
+    color: var(--cream);
+  }
+</style>

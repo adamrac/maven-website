@@ -1,0 +1,40 @@
+---
+interface Props {
+  overline?: string;
+  title: string;
+  lead?: string;
+  center?: boolean;
+  class?: string;
+}
+
+const { overline, title, lead, center = false, class: className = '' } = Astro.props;
+---
+
+<header class:list={['sh', center && 'sh-center', className]}>
+  {overline && <p class="overline">{overline}</p>}
+  <h2 class="h2 sh-title">{title}</h2>
+  {lead && <p class="lead muted sh-lead">{lead}</p>}
+</header>
+
+<style>
+  .sh {
+    max-width: 46rem;
+  }
+
+  .sh-center {
+    margin-inline: auto;
+    text-align: center;
+  }
+
+  .sh-center .sh-lead {
+    margin-inline: auto;
+  }
+
+  .sh-title {
+    margin-top: 1.25rem;
+  }
+
+  .sh-lead {
+    margin-top: 1.25rem;
+  }
+</style>

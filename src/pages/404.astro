@@ -1,0 +1,51 @@
+---
+import Base from '../layouts/Base.astro';
+import DownloadButton from '../components/DownloadButton.astro';
+import { withBase } from '../site';
+---
+
+<Base
+  title="Page not found"
+  description="That page doesn’t exist. Here’s the way back to Marlo."
+>
+  <section class="nf">
+
+    <div class="page layer-up">
+      <div class="nf-inner">
+        <h1 class="h1 nf-title">That page isn’t here.</h1>
+        <p class="lead muted nf-lead">
+          Sorry, we can’t find that page. <a href={withBase('/')}>Head back to the start</a>, or get Marlo on
+          your phone.
+        </p>
+        <div class="cluster nf-actions">
+          <DownloadButton />
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .nf {
+    position: relative;
+    overflow: hidden;
+    padding-block: clamp(8rem, 5rem + 8vw, 12rem) clamp(4rem, 2rem + 8vw, 9rem);
+  }
+
+  .nf-inner {
+    max-width: 40rem;
+  }
+
+  .nf-kicker {
+    color: var(--accent);
+    margin-bottom: 1.25rem;
+  }
+
+  .nf-title {
+    margin-bottom: 1.25rem;
+  }
+
+  .nf-actions {
+    margin-top: 2.25rem;
+  }
+</style>

@@ -1,0 +1,222 @@
+---
+import Icon from './Icon.astro';
+import Wordmark from './Wordmark.astro';
+
+/**
+ * The Marlo splash screen, rebuilt for the web: four organic icon blobs on a
+ * dashed orbit around the wordmark.
+ *
+ * The ring turns slowly and each blob counter-turns so its icon stays upright.
+ * Blobs are placed with explicit edge positions rather than rotate+translate —
+ * a percentage translate resolves against the element's own box, which collapses
+ * a zero-size node to the centre.
+ */
+const nodes = [
+  { icon: 'drop', pos: 'top', blob: 'berry', ink: 'cream', depth: 26 },
+  { icon: 'sprout', pos: 'right', blob: 'blush', ink: 'berry', depth: 40 },
+  { icon: 'sun', pos: 'bottom', blob: 'butter', ink: 'clay', depth: 22 },
+  { icon: 'moon', pos: 'left', blob: 'sky', ink: 'berry', depth: 34 },
+] as const;
+---
+
+<div class="orbit" role="img" aria-label="Marlo tracks cycle, body, mood and sleep" data-inview>
+  <div class="orbit-pulse" aria-hidden="true"></div>
+  <div class="orbit-ring" aria-hidden="true" data-drift="10"></div>
+
+  <div class="orbit-spin" aria-hidden="true">
+    {
+      nodes.map((n, i) => (
+        <span class:list={['onode', `at-${n.pos}`]} style={`--n:${i}`}>
+          <span class="odrift" data-drift={n.depth}>
+            <span class:list={['oblob', `ob-${n.blob}`, `ink-${n.ink}`]}>
+              <Icon name={n.icon} />
+            </span>
+          </span>
+        </span>
+      ))
+    }
+  </div>
+
+  <div class="orbit-core" data-drift="-8">
+    <Wordmark size={60} tint="cream" dot="blush" />
+  </div>
+</div>
+
+<style>
+  .orbit {
+    position: relative;
+    width: min(100%, 30rem);
+    aspect-ratio: 1;
+    margin-inline: auto;
+    display: grid;
+    place-items: center;
+  }
+
+  .orbit-ring {
+    position: absolute;
+    inset: 14%;
+    border-radius: 50%;
+    border: 2px dashed rgba(251, 244, 226, 0.45);
+  }
+
+  .orbit-spin {
+    position: absolute;
+    inset: 0;
+    animation: orbit-turn 54s linear infinite;
+  }
+
+  .onode {
+    position: absolute;
+    width: clamp(4.4rem, 3rem + 6vw, 6.4rem);
+    aspect-ratio: 1;
+  }
+
+  .at-top {
+    top: 0;
+    left: 50%;
+    translate: -50% 0;
+  }
+  .at-right {
+    right: 0;
+    top: 50%;
+    translate: 0 -50%;
+  }
+  .at-bottom {
+    bottom: 0;
+    left: 50%;
+    translate: -50% 0;
+  }
+  .at-left {
+    left: 0;
+    top: 50%;
+    translate: 0 -50%;
+  }
+
+  .oblob {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    place-items: center;
+    padding: clamp(1.1rem, 0.7rem + 1.4vw, 1.6rem);
+    /* Organic, not circular */
+    border-radius: 54% 46% 48% 52% / 50% 52% 48% 50%;
+    box-shadow: 0 10px 26px rgba(90, 9, 38, 0.18);
+    animation:
+      orbit-counter 54s linear infinite,
+      blob-morph 16s ease-in-out infinite alternate;
+  }
+
+  .ob-berry {
+    background: var(--berry);
+  }
+  .ob-blush {
+    background: var(--blush);
+  }
+  .ob-butter {
+    background: var(--butter);
+  }
+  .ob-sky {
+    background: var(--sky);
+  }
+
+  .ink-cream {
+    color: var(--cream);
+  }
+  .ink-berry {
+    color: var(--berry);
+  }
+  .ink-clay {
+    color: var(--clay);
+  }
+
+  .orbit-core {
+    position: relative;
+    z-index: 2;
+  }
+
+  .odrift {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* A slow breath behind the wordmark */
+  .orbit-pulse {
+    position: absolute;
+    inset: 30%;
+    border-radius: 50%;
+    background: rgba(251, 244, 226, 0.1);
+    animation: orbit-breathe 6s ease-in-out infinite;
+  }
+
+  @keyframes orbit-breathe {
+    0%,
+    100% {
+      scale: 0.85;
+      opacity: 0.6;
+    }
+    50% {
+      scale: 1.25;
+      opacity: 1;
+    }
+  }
+
+  /* Entrance: the ring opens, then each blob pops onto it */
+  :global(.js-motion) .orbit-ring {
+    scale: 0.6;
+    opacity: 0;
+    transition:
+      scale 1.4s var(--ease-out) 0.3s,
+      opacity 1s ease 0.3s;
+  }
+
+  :global(.js-motion) .oblob {
+    scale: 0;
+    transition: scale 0.9s var(--ease-spring);
+    transition-delay: calc(0.75s + var(--n) * 0.14s);
+  }
+
+  :global(.js-motion) .orbit-core {
+    opacity: 0;
+    scale: 0.9;
+    transition:
+      opacity 1s ease 0.5s,
+      scale 1.2s var(--ease-out) 0.5s;
+  }
+
+  :global(.js-motion) .orbit.is-in .orbit-ring,
+  :global(.js-motion) .orbit.is-in .oblob,
+  :global(.js-motion) .orbit.is-in .orbit-core {
+    scale: 1;
+    opacity: 1;
+  }
+
+  @keyframes orbit-turn {
+    to {
+      rotate: 360deg;
+    }
+  }
+
+  @keyframes orbit-counter {
+    to {
+      rotate: -360deg;
+    }
+  }
+
+  @keyframes blob-morph {
+    from {
+      border-radius: 54% 46% 48% 52% / 50% 52% 48% 50%;
+    }
+    to {
+      border-radius: 44% 56% 58% 42% / 56% 44% 56% 44%;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .orbit-spin,
+    .oblob,
+    .orbit-pulse {
+      animation: none;
+    }
+  }
+</style>

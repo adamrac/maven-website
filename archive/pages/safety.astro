@@ -1,0 +1,515 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import SectionHeader from '../components/SectionHeader.astro';
+import CtaBand from '../components/CtaBand.astro';
+
+const services = [
+  { name: 'Emergency services', phone: '000', use: 'Life-threatening emergency, severe injury, or immediate danger' },
+  { name: 'Lifeline', phone: '13 11 14', use: 'Mental health crisis, suicidal thoughts, emotional distress' },
+  { name: 'Beyond Blue', phone: '1300 22 4636', use: 'Anxiety, depression and mental health support' },
+  { name: '1800RESPECT', phone: '1800 737 732', use: 'Domestic, family and sexual violence support' },
+  { name: 'Butterfly Foundation', phone: '1800 33 4673', use: 'Eating disorders and body image concerns' },
+  { name: 'SANDS Australia', phone: '1300 072 637', use: 'Miscarriage, stillbirth and pregnancy loss' },
+  { name: 'healthdirect', phone: '1800 022 222', use: 'General health advice and finding a GP' },
+  { name: '13YARN', phone: '13 92 76', use: 'Crisis support for Aboriginal and Torres Strait Islander peoples' },
+  { name: 'QLife', phone: '1800 184 527', use: 'LGBTQIA+ peer support and referral' },
+];
+
+const isNot = [
+  'A medical device or diagnostic tool',
+  'A symptom checker',
+  'A crisis service',
+  'Anti-doctor, or generic wellness content',
+];
+
+const is = [
+  'A health companion',
+  'An advocacy tool',
+  'An organisational & educational platform',
+  'A support for the healthcare system',
+];
+
+const dataFacts = [
+  {
+    title: 'Stored in Sydney',
+    body: 'Your account and health data live in AWS ap-southeast-2, handled under Australian privacy law. Nothing is shipped to an overseas platform.',
+  },
+  {
+    title: 'Encrypted, and scoped to you',
+    body: 'Documents are encrypted at rest and reached only through short-lived links tied to your account. One user structurally cannot reach another’s files.',
+  },
+  {
+    title: 'Works offline',
+    body: 'Your data is cached on your own device, so the app keeps working on a bad connection — and syncs when it can.',
+  },
+  {
+    title: 'Yours to take',
+    body: 'Export any date range, section by section, through your phone’s share sheet. It’s your history, in a file you hold.',
+  },
+  {
+    title: 'Yours to delete',
+    body: 'Deleting your health data removes every log, every document and every version of it — including anything you posted in the community.',
+  },
+  {
+    title: 'Never sold',
+    body: 'Your health data powers your tracking and your insights. That is the whole list of what it is for.',
+  },
+];
+---
+
+<Base
+  title="Safety & privacy"
+  description="How Marlo handles safety: non-diagnostic language, red-flag detection, Quick Exit, verified Australian crisis support, and Australian data residency with export and deletion on request."
+>
+  <PageHero
+    overline="Safety & privacy"
+    title="Safety isn’t a feature. It’s the floor."
+    lead="Marlo covers sensitive ground — pain that isn’t believed, mental health, trauma, violence at home. The app is built against a clinical governance framework, and these are the parts of it you should be able to see."
+  />
+
+  <!-- ─────────────────────────────────────────────────────── governance -->
+  <section class="section" id="governance">
+    <div class="page">
+      <SectionHeader
+        overline="Clinical governance"
+        title="Non-diagnostic by design."
+        lead="Marlo never tells you what condition you have. Not as a disclaimer — as an architectural rule the code actually enforces."
+        class="reveal"
+      />
+
+      <div class="grid grid-2 gov">
+        <article class="gov-item reveal">
+          <h3 class="h4 gov-title">Observations, never conclusions</h3>
+          <p class="small muted">
+            Every insight describes a pattern in your own logs. The analytics are deterministic
+            statistics — they cannot infer, predict, or name a condition, because nothing in them
+            does that.
+          </p>
+        </article>
+        <article class="gov-item reveal" style="--delay:80ms">
+          <h3 class="h4 gov-title">Hedged language, reviewed centrally</h3>
+          <p class="small muted">
+            All clinically weighted copy lives in one reviewable place so a Clinical Lead can sign
+            it off in one pass, rather than hunting it screen by screen.
+          </p>
+        </article>
+        <article class="gov-item reveal">
+          <h3 class="h4 gov-title">Evidence levels and review dates</h3>
+          <p class="small muted">
+            Every article in the resource hub carries an evidence level — well-established,
+            emerging, or general guidance — and the month it was last reviewed.
+          </p>
+        </article>
+        <article class="gov-item reveal" style="--delay:80ms">
+          <h3 class="h4 gov-title">Signposting that isn’t buried</h3>
+          <p class="small muted">
+            Where content could read as personal advice, Marlo points you to professional care in
+            the same breath — prominently, and without a dismiss button.
+          </p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ────────────────────────────────────────────────────────── red flags -->
+  <section class="section section-tint">
+    <div class="page">
+      <div class="block on-blush flags reveal">
+        <div>
+          <p class="overline">Red-flag detection</p>
+          <h2 class="h2 flags-title">Marlo is reading for the moments that matter.</h2>
+          <p class="body">
+            When you write a note or log a symptom, Marlo scans it for signals that you might need
+            urgent care: thoughts of self-harm, acute physical symptoms, pregnancy emergencies,
+            serious warning signs, and fear of someone at home.
+          </p>
+          <p class="body flags-body">
+            If it sees one, support appears immediately — and on three of the logging screens the
+            app deliberately won’t let the screen close on you. Your entry is saved; the support
+            stays in front of you.
+          </p>
+        </div>
+        <ul class="flags-list">
+          <li>It errs toward showing support rather than staying quiet.</li>
+          <li>It never interprets what it sees as a condition.</li>
+          <li>It never blocks you from writing or posting what you want to.</li>
+          <li>Logging something at maximum intensity is enough to prompt a gentle check-in.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────────────────────────────────────────────────────── quick exit -->
+  <section class="section">
+    <div class="page">
+      <div class="quickexit reveal">
+        <div class="quickexit-copy">
+          <p class="overline qe-kicker">Quick Exit</p>
+          <h2 class="h2">One tap, and Marlo is gone.</h2>
+          <p class="lead muted qe-lead">
+            For anyone whose phone isn’t private, or whose home isn’t safe. Quick Exit leaves the
+            app immediately and opens a neutral page, so there is no health information on screen —
+            no confirmation dialog, no delay, no trace on the surface.
+          </p>
+          <p class="small muted">
+            It’s there from the start: named in the first thing Marlo tells you about itself, and
+            surfaced again whenever the app detects someone may not be safe.
+          </p>
+        </div>
+        <div class="quickexit-demo" aria-hidden="true">
+          <div class="qe-chip">Quick exit</div>
+          <svg viewBox="0 0 120 60" class="qe-arrow" aria-hidden="true">
+            <path
+              d="M4 30 C 40 30, 70 30, 104 30"
+              fill="none"
+              stroke="var(--line-strong)"
+              stroke-width="2"
+              stroke-dasharray="6 6"
+              stroke-linecap="round"></path>
+            <path
+              d="M96 22 L108 30 L96 38"
+              fill="none"
+              stroke="var(--clay)"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"></path>
+          </svg>
+          <div class="qe-neutral">
+            <span class="qe-neutral-bar"></span>
+            <span class="qe-neutral-line"></span>
+            <span class="qe-neutral-line short"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────────────────────────────────────────────────────────── support -->
+  <section class="section section-tint" id="support">
+    <div class="page">
+      <SectionHeader
+        overline="Crisis support"
+        title="Verified Australian services, always one tap away."
+        lead="These are the services Marlo surfaces, and they’re here too — because you shouldn’t need to download an app to find them. Every number is verified quarterly by our Clinical Lead."
+        class="reveal"
+      />
+
+      <ul class="services reveal">
+        {
+          services.map((s) => (
+            <li class="service">
+              <div class="service-main">
+                <h3 class="h4 service-name">{s.name}</h3>
+                <p class="small muted service-use">{s.use}</p>
+              </div>
+              <a class="service-phone" href={`tel:${s.phone.replace(/\s/g, '')}`}>
+                {s.phone}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+
+      <p class="note reveal">
+        Marlo is not an emergency service. If you are in immediate danger, call <strong>000</strong>.
+      </p>
+    </div>
+  </section>
+
+  <!-- ──────────────────────────────────────────────────────────────── data -->
+  <section class="section" id="data">
+    <div class="page">
+      <SectionHeader
+        overline="Your data"
+        title="It stays here, and it stays yours."
+        class="reveal"
+      />
+
+      <div class="grid grid-3 data">
+        {
+          dataFacts.map((d, i) => (
+            <article class="data-item reveal" style={`--delay:${(i % 3) * 80}ms`}>
+              <h3 class="h4 data-title">{d.title}</h3>
+              <p class="small muted">{d.body}</p>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────────────────────────────────────────────────────── guardrails -->
+  <section class="section section-tint">
+    <div class="page">
+      <SectionHeader
+        overline="Positioning guardrails"
+        title="Say what we are. Protect what we’re not."
+        class="reveal"
+      />
+
+      <div class="grid grid-2 guard">
+        <div class="guard-col reveal">
+          <h3 class="overline guard-head">Marlo is</h3>
+          <ul class="guard-list guard-is">
+            {is.map((i) => <li>{i}</li>)}
+          </ul>
+        </div>
+        <div class="guard-col reveal" style="--delay:90ms">
+          <h3 class="overline guard-head">Marlo is not</h3>
+          <ul class="guard-list guard-isnt">
+            {isNot.map((i) => <li>{i}</li>)}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <CtaBand
+    overline="Built carefully"
+    title="Health tech worth trusting."
+    lead="Marlo is in build. Leave your email and we’ll tell you the day it opens."
+  />
+</Base>
+
+<style>
+  .section-tint {
+    background: var(--cream-deep);
+  }
+
+  .note {
+    margin-top: 2rem;
+    font-size: var(--t-small);
+    color: var(--ink-muted);
+    max-width: 44rem;
+  }
+
+  .note strong {
+    color: var(--ink);
+  }
+
+  /* ---------------------------------------------------------- governance */
+  .gov {
+    margin-top: clamp(2.25rem, 1.5rem + 2.5vw, 3.5rem);
+    gap: clamp(1.75rem, 1rem + 2vw, 2.75rem) clamp(2rem, 1rem + 4vw, 4rem);
+  }
+
+  .gov-item {
+    padding-top: 1.25rem;
+    border-top: 2px solid var(--line-strong);
+  }
+
+  .gov-title {
+    margin-bottom: 0.55rem;
+  }
+
+  /* --------------------------------------------------------------- flags */
+  .flags {
+    display: grid;
+    gap: clamp(2rem, 1rem + 3vw, 3.5rem);
+  }
+
+  @media (min-width: 56rem) {
+    .flags {
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+      align-items: center;
+    }
+  }
+
+  .flags-title {
+    margin-block: 1rem;
+  }
+
+  .flags-body {
+    margin-top: 1rem;
+  }
+
+  .flags-list {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: 0.9rem;
+  }
+
+  .flags-list li {
+    font-size: var(--t-small);
+    line-height: 1.5;
+    padding-left: 1.15rem;
+    border-left: 2.5px solid var(--berry);
+  }
+
+  /* ---------------------------------------------------------- quick exit */
+  .quickexit {
+    display: grid;
+    gap: clamp(2rem, 1rem + 4vw, 4rem);
+    align-items: center;
+  }
+
+  @media (min-width: 56rem) {
+    .quickexit {
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+    }
+  }
+
+  .qe-kicker {
+    color: var(--accent-display);
+    margin-bottom: 1rem;
+  }
+
+  .qe-lead {
+    margin-block: 1.1rem 1.1rem;
+  }
+
+  .quickexit-demo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    justify-content: center;
+  }
+
+  .qe-chip {
+    background: #b3261e;
+    color: #fff;
+    font-size: var(--t-caption);
+    font-weight: 700;
+    padding: 0.5rem 1rem;
+    border-radius: var(--r-pill);
+    white-space: nowrap;
+  }
+
+  .qe-arrow {
+    width: 5rem;
+    flex-shrink: 0;
+  }
+
+  .qe-neutral {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--r-sm);
+    padding: 0.65rem;
+    display: grid;
+    gap: 0.4rem;
+    width: 5.5rem;
+    flex-shrink: 0;
+  }
+
+  .qe-neutral-bar {
+    height: 0.5rem;
+    border-radius: 2px;
+    background: var(--sky);
+  }
+
+  .qe-neutral-line {
+    height: 0.3rem;
+    border-radius: 2px;
+    background: var(--line);
+  }
+
+  .qe-neutral-line.short {
+    width: 60%;
+  }
+
+  /* ------------------------------------------------------------ services */
+  .services {
+    list-style: none;
+    padding: 0;
+    margin-top: clamp(2.25rem, 1.5rem + 2.5vw, 3.5rem);
+    border-top: 1px solid var(--line);
+  }
+
+  .service {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem var(--s-xl);
+    align-items: baseline;
+    justify-content: space-between;
+    padding-block: 1.15rem;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .service-main {
+    flex: 1 1 18rem;
+  }
+
+  .service-name {
+    margin-bottom: 0.2rem;
+  }
+
+  .service-use {
+    max-width: 38rem;
+  }
+
+  .service-phone {
+    font-family: var(--font-display);
+    font-weight: var(--display-weight);
+    font-size: 1.25rem;
+    text-decoration: none;
+    white-space: nowrap;
+    padding: 0.3rem 0.9rem;
+    border-radius: var(--r-pill);
+    background: var(--berry);
+    color: var(--cream);
+  }
+
+  .service-phone:hover {
+    background: var(--berry-dark);
+  }
+
+  /* ---------------------------------------------------------------- data */
+  .data {
+    margin-top: clamp(2.25rem, 1.5rem + 2.5vw, 3.5rem);
+    gap: clamp(1.75rem, 1rem + 2vw, 2.75rem) var(--s-xl);
+  }
+
+  .data-item {
+    padding-top: 1.25rem;
+    border-top: 2px solid var(--line-strong);
+  }
+
+  .data-title {
+    margin-bottom: 0.55rem;
+  }
+
+  /* ---------------------------------------------------------- guardrails */
+  .guard {
+    margin-top: clamp(2.25rem, 1.5rem + 2.5vw, 3.5rem);
+    gap: clamp(2rem, 1rem + 3vw, 4rem);
+  }
+
+  .guard-head {
+    color: var(--ink-muted);
+    margin-bottom: 1.25rem;
+  }
+
+  .guard-list {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: 0.9rem;
+  }
+
+  .guard-list li {
+    font-family: var(--font-display);
+    font-weight: var(--display-weight);
+    font-size: clamp(1.05rem, 1rem + 0.5vw, 1.35rem);
+    line-height: 1.25;
+    display: flex;
+    gap: 0.75rem;
+    align-items: baseline;
+  }
+
+  .guard-list li::before {
+    flex-shrink: 0;
+    font-size: 0.9em;
+  }
+
+  .guard-is li::before {
+    content: '✓';
+    color: var(--berry);
+  }
+
+  .guard-isnt li::before {
+    content: '✕';
+    color: var(--clay);
+  }
+</style>

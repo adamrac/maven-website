@@ -1,0 +1,50 @@
+---
+/**
+ * Quiet brand signal, mirrored from the app: Aboriginal Flag + Progress Pride
+ * Flag, drawn as SVG so there is no image dependency.
+ */
+interface Props {
+  tint?: 'berry' | 'cream';
+}
+const { tint = 'berry' } = Astro.props;
+---
+
+<div
+  class="flags"
+  role="img"
+  aria-label="Inclusive of Aboriginal and Torres Strait Islander peoples and LGBTQIA+ communities"
+>
+  <svg width="38" height="25" viewBox="0 0 36 24" aria-hidden="true">
+    <rect x="0" y="0" width="36" height="12" fill="#000000"></rect>
+    <rect x="0" y="12" width="36" height="12" fill="#CC0000"></rect>
+    <circle cx="18" cy="12" r="5.2" fill="#FFCC00"></circle>
+  </svg>
+
+  <svg width="38" height="25" viewBox="0 0 36 24" aria-hidden="true">
+    <rect x="0" y="0" width="36" height="4" fill="#E40303"></rect>
+    <rect x="0" y="4" width="36" height="4" fill="#FF8C00"></rect>
+    <rect x="0" y="8" width="36" height="4" fill="#FFED00"></rect>
+    <rect x="0" y="12" width="36" height="4" fill="#008026"></rect>
+    <rect x="0" y="16" width="36" height="4" fill="#24408E"></rect>
+    <rect x="0" y="20" width="36" height="4" fill="#732982"></rect>
+    <path d="M0 0 L10 12 L0 24 Z" fill="#000000"></path>
+    <path d="M0 0 L8 12 L0 24 Z" fill="#613915"></path>
+    <path d="M0 0 L6 12 L0 24 Z" fill="#74D7EE"></path>
+    <path d="M0 0 L4 12 L0 24 Z" fill="#FFAFC8"></path>
+    <path d="M0 0 L2 12 L0 24 Z" fill="#FFFFFF"></path>
+  </svg>
+</div>
+
+<style define:vars={{ ring: tint === 'cream' ? 'var(--line-inverse)' : 'var(--line)' }}>
+  .flags {
+    display: flex;
+    gap: 0.6rem;
+    align-items: center;
+    margin-top: 1.1rem;
+  }
+
+  .flags svg {
+    border-radius: 3px;
+    box-shadow: 0 0 0 1px var(--ring);
+  }
+</style>

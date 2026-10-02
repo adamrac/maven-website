@@ -1,0 +1,615 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import SectionHeader from '../components/SectionHeader.astro';
+import CtaBand from '../components/CtaBand.astro';
+import ImageSlot from '../components/ImageSlot.astro';
+
+const trackers = [
+  {
+    name: 'Symptoms',
+    body: 'Twelve presets or your own words, with an intensity from mild to severe and a note if you want one.',
+  },
+  {
+    name: 'Mood',
+    body: 'Five levels, plus tags for what else is going on: anxious, foggy, motivated, overwhelmed.',
+  },
+  {
+    name: 'Cycle',
+    body: 'Flow from spotting to heavy, and a first-day marker that re-anchors every cycle estimate.',
+  },
+  {
+    name: 'Sleep',
+    body: 'Hours slept and how rested you felt, from exhausted to refreshed.',
+  },
+  {
+    name: 'Body',
+    body: 'Weight, temperature, libido and pain are captured as real numbers, so they can be charted.',
+  },
+  {
+    name: 'Intimacy',
+    body: 'A private log that records only what you want it to — and stays out of exports unless you say so.',
+  },
+];
+
+const screenings = [
+  { name: 'Cervical screening', who: '25 to 74', every: '5 years' },
+  { name: 'Breast screening', who: '40 and over', every: '2 years' },
+  { name: 'Bowel cancer screening', who: '45 to 74', every: '2 years' },
+  { name: 'Heart health check', who: '30 and over', every: '2 years' },
+  { name: 'Bone density check', who: '70+, or around menopause', every: '2 years' },
+  { name: 'Skin check', who: '18 and over', every: 'Yearly' },
+  { name: 'Sexual health check', who: '16 and over', every: 'Yearly' },
+];
+
+const insightRules = [
+  {
+    title: 'A symptom that keeps showing up',
+    body: 'When one label dominates your last 30 days, Marlo names it and the count — and suggests raising it at your next appointment.',
+  },
+  {
+    title: 'Mood trending up, or dipping',
+    body: 'Compares this week against last. It only speaks when the shift is real, and offers support when the direction is down.',
+  },
+  {
+    title: 'Sleep and mood look connected',
+    body: 'Needs at least three nights under six hours and three over, with a meaningful gap between the two mood averages.',
+  },
+  {
+    title: 'Your cycle length so far',
+    body: 'Your real mean and range from logged period starts. If the spread is wide, Marlo flags it as worth a conversation.',
+  },
+  {
+    title: 'Symptoms cluster at a certain point',
+    body: 'Maps symptoms onto your phase estimate and tells you plainly where they gather — your period, mid-cycle, or the luteal phase.',
+  },
+];
+---
+
+<Base
+  title="What it does"
+  description="Tracking, pattern insights, the Marlo Health Report, screening reminders, appointment prep, documents and export — what the Marlo app actually does, in detail."
+>
+  <PageHero
+    overline="The product"
+    title="Everything Marlo actually does."
+    lead="No vague promises. Here is the real behaviour of the app — what you can log, how the insights are calculated, what goes into the report, and exactly what leaves your phone."
+  />
+
+  <!-- ───────────────────────────────────────────────────────── onboarding -->
+  <section class="section">
+    <div class="page">
+      <SectionHeader
+        overline="Getting set up"
+        title="Four steps, and you can skip almost all of it."
+        lead="Marlo asks at your pace. Everything beyond your name and login is optional, and every question has a way past it."
+        class="reveal"
+      />
+
+      <ol class="steps">
+        <li class="step reveal">
+          <span class="numeral step-n">01</span>
+          <div>
+            <h3 class="h4">Get to know you</h3>
+            <p class="small muted">
+              Your name, and optionally your birthday, how you describe your gender, and what’s part
+              of your life right now — from perimenopause to trying to conceive.
+            </p>
+          </div>
+        </li>
+        <li class="step reveal" style="--delay:70ms">
+          <span class="numeral step-n">02</span>
+          <div>
+            <h3 class="h4">What brings you here</h3>
+            <p class="small muted">
+              Your cycle, where you’re up to with preventative screening, what runs in your family,
+              and any documents you’d like to bring with you.
+            </p>
+          </div>
+        </li>
+        <li class="step reveal" style="--delay:140ms">
+          <span class="numeral step-n">03</span>
+          <div>
+            <h3 class="h4">How we’ll work together</h3>
+            <p class="small muted">
+              Pick what you want help with, then your top three priorities. They genuinely reorder
+              your home screen — what matters to you sits at the top.
+            </p>
+          </div>
+        </li>
+        <li class="step reveal" style="--delay:210ms">
+          <span class="numeral step-n">04</span>
+          <div>
+            <h3 class="h4">How often we’ll chat</h3>
+            <p class="small muted">
+              Daily, a few times a week, weekly, or reminders only. You choose the time. You can
+              change it whenever you like.
+            </p>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ─────────────────────────────────────────────────────────── tracking -->
+  <section class="section section-tint" id="tracking">
+    <div class="page">
+      <SectionHeader
+        overline="Tracking"
+        title="Six ways to log, all of them quick."
+        lead="Little and often is all it takes. Every log takes a date — today, yesterday, or any day you pick — so catching up later is normal, not a failure."
+        class="reveal"
+      />
+
+      <div class="grid grid-3 trackers">
+        {
+          trackers.map((t, i) => (
+            <article class="card tracker reveal" style={`--delay:${(i % 3) * 80}ms`}>
+              <h3 class="h4 tracker-name">{t.name}</h3>
+              <p class="small muted">{t.body}</p>
+            </article>
+          ))
+        }
+      </div>
+
+      <p class="note reveal">
+        From your home screen, five of the most common symptoms are one tap away — no form, no
+        screen change, just logged.
+      </p>
+    </div>
+  </section>
+
+  <!-- ─────────────────────────────────────────────────────────── insights -->
+  <section class="section" id="insights">
+    <div class="page feature-split">
+      <div class="feature-copy reveal">
+        <p class="overline feature-kicker">Insights</p>
+        <h2 class="h2">Statistics on your own data. Nothing borrowed.</h2>
+        <p class="lead muted feature-lead">
+          Marlo doesn’t guess, predict, or name conditions. It runs deterministic maths over what
+          you logged and reports what it finds — with the thresholds set high enough that it stays
+          quiet when the data is thin.
+        </p>
+        <ul class="ticks">
+          <li>Seven metrics: mood, sleep, weight, temperature, libido, pain and fatigue</li>
+          <li>Stack up to five on one chart, each scaled to its own range so units can be compared</li>
+          <li>A correlation needs six shared days and a real coefficient before it appears</li>
+          <li>Every link is labelled “a link, not a cause” — and capped at the strongest four</li>
+        </ul>
+      </div>
+
+      <div class="feature-device reveal" style="--delay:120ms">
+        <ImageSlot brief="Insights in use: looking at her own patterns" ratio="4 / 5" />
+      </div>
+    </div>
+
+    <div class="page rules-wrap">
+      <h3 class="h3 rules-title reveal">The five patterns Marlo looks for</h3>
+      <div class="grid grid-2 rules">
+        {
+          insightRules.map((r, i) => (
+            <article class="rule-item reveal" style={`--delay:${(i % 2) * 80}ms`}>
+              <h4 class="h4 rule-name">{r.title}</h4>
+              <p class="small muted">{r.body}</p>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────────────────────────────────────────────────────────── cycle -->
+  <section class="section section-tint">
+    <div class="page">
+      <div class="block on-butter cycle reveal">
+        <div>
+          <p class="overline">Your cycle</p>
+          <h2 class="h2 cycle-title">An estimate, honestly labelled.</h2>
+          <p class="body">
+            Marlo works out where you are from your own logged period start and your average cycle
+            length — day of cycle, which phase, and roughly when the next period is due. Predicted
+            days appear on your calendar as a range, because that’s what they are.
+          </p>
+        </div>
+        <p class="cycle-warn">
+          It is never presented as fact, and it is never something to rely on for contraception. If
+          you tell Marlo you don’t have a cycle, these features disappear entirely.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ──────────────────────────────────────────────────────────── report -->
+  <section class="section" id="report">
+    <div class="page feature-split feature-split-reverse">
+      <div class="feature-device reveal">
+        <ImageSlot brief="The report in hand, on the way to an appointment" ratio="4 / 5" />
+      </div>
+
+      <div class="feature-copy reveal" style="--delay:120ms">
+        <p class="overline feature-kicker">The Marlo Health Report</p>
+        <h2 class="h2">Something to show, not just say.</h2>
+        <p class="lead muted feature-lead">
+          Choose 30 days, 90 days or all time. Marlo builds a PDF and hands it to your phone’s share
+          sheet — email it ahead, or open it in the room.
+        </p>
+        <ul class="ticks">
+          <li>Total entries, average mood and average sleep across the window</li>
+          <li>Every symptom with how often you logged it and its average intensity</li>
+          <li>Your cycle length and range, from the period starts you recorded</li>
+          <li>Recent body observations, and the non-diagnostic disclaimer in full</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────────────────────────────────────────────────────── calendar -->
+  <section class="section section-tint" id="calendar">
+    <div class="page">
+      <SectionHeader
+        overline="Calendar & reminders"
+        title="Preventative, not reactive."
+        lead="Marlo asks where you’re up to with Australian screening programmes during setup, then builds the reminders for you. Anything overdue, never done, or unsure gets a nudge a month out."
+        class="reveal"
+      />
+
+      <div class="table-wrap reveal">
+        <table class="table">
+          <caption class="sr-only">
+            Preventative screening programmes Marlo tracks, who they apply to, and how often
+          </caption>
+          <thead>
+            <tr>
+              <th scope="col">Programme</th>
+              <th scope="col">Applies to</th>
+              <th scope="col">How often</th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              screenings.map((s) => (
+                <tr>
+                  <th scope="row">{s.name}</th>
+                  <td>{s.who}</td>
+                  <td>{s.every}</td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <p class="note reveal">
+        Eligibility and intervals are pending Clinical Lead sign-off before release. Your calendar
+        also carries your appointments, your own reminders, every day you’ve logged something, and
+        your predicted period window.
+      </p>
+    </div>
+  </section>
+
+  <!-- ─────────────────────────────────────────────────── notes & documents -->
+  <section class="section">
+    <div class="page">
+      <SectionHeader
+        overline="Prepare & keep"
+        title="The paperwork, finally in one place."
+        class="reveal"
+      />
+
+      <div class="grid grid-3 keeps">
+        <article class="keep reveal">
+          <h3 class="h3 keep-title">Appointment prep</h3>
+          <p class="muted">
+            Build your questions before you go, from suggestions or your own. Pick the type, set the
+            date, note the location — and keep what was said afterwards.
+          </p>
+        </article>
+        <article class="keep reveal" style="--delay:80ms">
+          <h3 class="h3 keep-title">Notes & journal</h3>
+          <p class="muted">
+            Write in your own words. Pin what matters, link a note to an appointment, and find any
+            of it again through search.
+          </p>
+        </article>
+        <article class="keep reveal" style="--delay:160ms">
+          <h3 class="h3 keep-title">Your documents</h3>
+          <p class="muted">
+            Letters, results and referrals as PDFs or photos, up to 10 MB each. Uploaded straight to
+            private Australian storage that only your account can reach.
+          </p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ──────────────────────────────────────────────────────────── export -->
+  <section class="section section-tint" id="export">
+    <div class="page">
+      <div class="block on-sky export reveal">
+        <div class="export-copy">
+          <p class="overline">Export</p>
+          <h2 class="h2 export-title">You choose exactly what’s shared.</h2>
+          <p class="body">
+            Thirteen sections, each one a tick box, over any date range you like. Your intimacy log
+            is switched off by default every time — and because libido is filed with it rather than
+            with your other body metrics, ticking “Body” alone never discloses it.
+          </p>
+        </div>
+        <ul class="export-list">
+          <li>Profile</li>
+          <li>Symptoms</li>
+          <li>Mood</li>
+          <li>Cycle</li>
+          <li>Sleep</li>
+          <li>Body</li>
+          <li class="is-off">Sex & intimacy</li>
+          <li>Check-ins</li>
+          <li>Appointments</li>
+          <li>Notes</li>
+          <li>Community</li>
+          <li>Reminders</li>
+          <li>Documents</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <CtaBand
+    overline="The whole thing"
+    title="See it for yourself."
+    lead="Marlo is in build. Leave your email and we’ll let you know the day it opens."
+  />
+</Base>
+
+<style>
+  .section-tint {
+    background: var(--cream-deep);
+  }
+
+  .note {
+    margin-top: 2rem;
+    font-size: var(--t-small);
+    color: var(--ink-muted);
+    max-width: 44rem;
+  }
+
+  /* --------------------------------------------------------------- steps */
+  .steps {
+    list-style: none;
+    padding: 0;
+    margin-top: clamp(2.25rem, 1.5rem + 2.5vw, 3.5rem);
+    display: grid;
+    gap: 0;
+    border-top: 1px solid var(--line);
+  }
+
+  .step {
+    display: grid;
+    grid-template-columns: 3rem minmax(0, 1fr);
+    gap: var(--s-lg);
+    padding-block: 1.5rem;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .step-n {
+    font-size: 1rem;
+    color: var(--accent-display);
+  }
+
+  .step h3 {
+    margin-bottom: 0.4rem;
+  }
+
+  @media (min-width: 48rem) {
+    .step {
+      grid-template-columns: 3rem minmax(0, 14rem) minmax(0, 1fr);
+      align-items: baseline;
+    }
+    .step > div {
+      display: contents;
+    }
+    .step h3 {
+      margin-bottom: 0;
+    }
+  }
+
+  /* ------------------------------------------------------------ trackers */
+  .trackers {
+    margin-top: clamp(2.25rem, 1.5rem + 2.5vw, 3.5rem);
+  }
+
+  .tracker-name {
+    color: var(--accent-display);
+    margin-bottom: 0.5rem;
+  }
+
+  /* ------------------------------------------------------- feature split */
+  .feature-split {
+    display: grid;
+    gap: clamp(2.5rem, 1.5rem + 5vw, 4.5rem);
+    align-items: center;
+  }
+
+  @media (min-width: 60rem) {
+    .feature-split {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .feature-split-reverse .feature-device {
+      order: -1;
+    }
+  }
+
+  .feature-kicker {
+    color: var(--accent-display);
+    margin-bottom: 1.1rem;
+  }
+
+  .feature-lead {
+    margin-top: 1.1rem;
+  }
+
+  .feature-device {
+    justify-self: center;
+    width: 100%;
+  }
+
+
+  /* --------------------------------------------------------------- rules */
+  .rules-wrap {
+    margin-top: clamp(3rem, 2rem + 4vw, 5rem);
+  }
+
+  .rules-title {
+    margin-bottom: clamp(1.75rem, 1rem + 2vw, 2.5rem);
+  }
+
+  .rule-item {
+    padding-top: 1.25rem;
+    border-top: 2px solid var(--line-strong);
+  }
+
+  .rule-name {
+    margin-bottom: 0.55rem;
+  }
+
+  /* --------------------------------------------------------------- cycle */
+  .cycle {
+    display: grid;
+    gap: clamp(1.75rem, 1rem + 3vw, 3rem);
+  }
+
+  @media (min-width: 56rem) {
+    .cycle {
+      grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr);
+      align-items: end;
+    }
+  }
+
+  .cycle-title {
+    margin-block: 1rem;
+  }
+
+  .cycle-warn {
+    font-size: var(--t-small);
+    line-height: 1.55;
+    padding-left: 1.15rem;
+    border-left: 2.5px solid var(--berry);
+  }
+
+  /* --------------------------------------------------------------- table */
+  .table-wrap {
+    margin-top: clamp(2.25rem, 1.5rem + 2.5vw, 3.5rem);
+    overflow-x: auto;
+  }
+
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 34rem;
+  }
+
+  .table th,
+  .table td {
+    text-align: left;
+    padding: 1rem 1rem 1rem 0;
+    border-bottom: 1px solid var(--line);
+    font-weight: 400;
+  }
+
+  .table thead th {
+    font-size: var(--t-overline);
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    font-weight: 700;
+    color: var(--ink-muted);
+    padding-bottom: 0.75rem;
+  }
+
+  .table tbody th {
+    font-family: var(--font-display);
+    font-weight: var(--display-weight);
+    font-size: 1.0625rem;
+    width: 45%;
+  }
+
+  .table td {
+    font-size: var(--t-small);
+    color: var(--ink-muted);
+  }
+
+  /* --------------------------------------------------------------- keeps */
+  .keeps {
+    margin-top: clamp(2.25rem, 1.5rem + 2.5vw, 3.5rem);
+    gap: clamp(2rem, 1rem + 2.5vw, 3rem) var(--s-xl);
+  }
+
+  .keep {
+    padding-top: 1.25rem;
+    border-top: 2px solid var(--line-strong);
+  }
+
+  .keep-title {
+    margin-bottom: 0.7rem;
+  }
+
+  /* -------------------------------------------------------------- export */
+  .export {
+    display: grid;
+    gap: clamp(2rem, 1rem + 3vw, 3.5rem);
+  }
+
+  @media (min-width: 56rem) {
+    .export {
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+      align-items: center;
+    }
+  }
+
+  .export-title {
+    margin-block: 1rem;
+  }
+
+  .export-list {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: 0.5rem;
+    font-size: var(--t-small);
+  }
+
+  .export-list li {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+  }
+
+  .export-list li::before {
+    content: '';
+    width: 1.1rem;
+    height: 1.1rem;
+    border-radius: 5px;
+    background: var(--berry);
+    flex-shrink: 0;
+    background-image: linear-gradient(
+        to bottom right,
+        transparent 46%,
+        var(--cream) 46%,
+        var(--cream) 54%,
+        transparent 54%
+      ),
+      linear-gradient(to bottom left, transparent 46%, var(--cream) 46%, var(--cream) 54%, transparent 54%);
+    background-size: 60% 60%;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+
+  .export-list .is-off {
+    color: var(--ink-muted);
+  }
+
+  .export-list .is-off::before {
+    background: transparent;
+    border: 2px dashed var(--line-strong);
+    background-image: none;
+  }
+</style>

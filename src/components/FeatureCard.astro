@@ -1,0 +1,113 @@
+---
+/**
+ * A tall feature card: headline and a line of copy at the top, a small piece
+ * of the app rising up from the bottom edge. The mock goes in the slot.
+ */
+interface Props {
+  tone: 'sky' | 'blush' | 'butter';
+  title: string;
+  body: string;
+}
+const { tone, title, body } = Astro.props;
+---
+
+<article class:list={['fc', `fc-${tone}`]} data-inview>
+  <div class="fc-copy">
+    <h3 class="fc-title">{title}</h3>
+    <p class="fc-body">{body}</p>
+  </div>
+  <div class="fc-mock" aria-hidden="true">
+    <slot />
+  </div>
+</article>
+
+<style>
+  .fc {
+    position: relative;
+    overflow: hidden;
+    border-radius: clamp(24px, 1rem + 1vw, 32px);
+    padding: clamp(1.6rem, 1.1rem + 1.4vw, 2.4rem) clamp(1.6rem, 1.1rem + 1.4vw, 2.4rem) 0;
+    display: flex;
+    flex-direction: column;
+    min-height: clamp(30rem, 26rem + 8vw, 36rem);
+    transition:
+      transform 0.6s var(--ease-out),
+      box-shadow 0.6s var(--ease-out);
+  }
+
+  .fc-sky {
+    background: var(--sky);
+  }
+  .fc-blush {
+    background: var(--blush);
+  }
+  .fc-butter {
+    background: var(--butter);
+  }
+
+  .fc-title {
+    font-family: var(--font-display);
+    font-weight: var(--display-weight);
+    font-size: clamp(1.7rem, 1.3rem + 1.2vw, 2.4rem);
+    line-height: 1.04;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+
+  .fc-body {
+    margin-top: 0.85rem;
+    font-size: var(--t-body);
+    line-height: 1.5;
+    color: var(--ink-muted);
+    max-width: 30ch;
+    text-wrap: pretty;
+  }
+
+  .fc-mock {
+    margin-top: auto;
+    padding-top: 2rem;
+    transition: translate 0.7s var(--ease-out);
+  }
+
+  @media (hover: hover) {
+    .fc:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 26px 50px -26px rgba(90, 9, 38, 0.35);
+    }
+    .fc:hover .fc-mock {
+      translate: 0 -10px;
+    }
+  }
+
+  :global(.js-motion) .fc .fc-mock {
+    translate: 0 40px;
+    opacity: 0;
+    transition:
+      translate 1.1s var(--ease-out) 0.2s,
+      opacity 0.6s ease 0.2s;
+  }
+
+  :global(.js-motion) .fc.is-in .fc-mock {
+    translate: 0 0;
+    opacity: 1;
+  }
+
+  @media (hover: hover) {
+    :global(.js-motion) .fc.is-in:hover .fc-mock {
+      translate: 0 -10px;
+      transition-delay: 0s;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .fc,
+    .fc-mock {
+      transition: none;
+    }
+    .fc:hover,
+    .fc:hover .fc-mock {
+      transform: none;
+      translate: none;
+    }
+  }
+</style>

@@ -1,0 +1,468 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import SectionHeader from '../components/SectionHeader.astro';
+import CtaBand from '../components/CtaBand.astro';
+
+const offering = ['Clarity', 'Validation', 'Continuity', 'Understanding', 'Support'];
+
+const pillars = [
+  {
+    n: '01',
+    title: 'We take the mental load away',
+    body: 'Women are managing their health alone. Marlo centralises the whole experience.',
+  },
+  {
+    n: '02',
+    title: 'Your body data tells a story',
+    body: 'Patterns and trends, not piles of information. Understanding, not just collection.',
+  },
+  {
+    n: '03',
+    title: 'We help you advocate for yourself',
+    body: 'Evidence, context and language for every appointment.',
+  },
+  {
+    n: '04',
+    title: 'Preventative, not reactive',
+    body: 'Understanding the body early creates better long-term outcomes.',
+  },
+  {
+    n: '05',
+    title: 'Your whole body, not isolated symptoms',
+    body: 'Hormones, mood, energy, lifestyle and stress are connected, so we treat them that way.',
+  },
+  {
+    n: '06',
+    title: 'You are not alone',
+    body: 'Validation and moderated community are part of care, not an add-on.',
+  },
+];
+
+const australia = [
+  {
+    title: 'Data stays in Australia',
+    body: 'User data is stored onshore and handled under Australian privacy law, not shipped to an overseas platform.',
+  },
+  {
+    title: 'Built for Medicare realities',
+    body: 'Designed around GP referrals, specialist waitlists, bulk-billing gaps and real Medicare pathways.',
+  },
+  {
+    title: 'AHPRA-registered clinicians',
+    body: 'Future Marlo clinicians are registered with the Australian Health Practitioner Regulation Agency.',
+  },
+  {
+    title: 'A trust position, not a tagline',
+    body: 'Local ownership and regulation is a core differentiator against large overseas health and telehealth platforms.',
+  },
+];
+
+const phases = [
+  {
+    tag: 'Phase A',
+    title: 'Advocacy & support',
+    status: 'In build',
+    items: [
+      'Symptom, mood, cycle & sleep tracking',
+      'Pattern & trend insights',
+      'The Marlo Health Report',
+      'Calendar, reminders & notes',
+      'Resource hub & moderated community',
+    ],
+  },
+  {
+    tag: 'Phase B',
+    title: 'Endorsed telehealth',
+    status: 'Next',
+    items: [
+      'Clinician directory & booking',
+      'In-app video consultations',
+      'Consent-based data sharing',
+      'Clinician portal, resources & tasks',
+    ],
+  },
+  {
+    tag: 'Phase C',
+    title: 'Between appointments',
+    status: 'Later',
+    items: [
+      'Asynchronous clinician messaging',
+      'Clinician data reviews',
+      'Light-touch check-ins',
+      'Clear response-time expectations',
+    ],
+  },
+];
+
+const personality = [
+  { trait: 'Calm and capable', body: 'Grounded, consistent, trustworthy.' },
+  { trait: 'Warm but direct', body: 'Emotionally intelligent without being soft.' },
+  { trait: 'Intelligent, never clinical', body: 'Knowledgeable, never patronising.' },
+  { trait: 'Validating, not anti-medical', body: 'She works with doctors, for you.' },
+];
+---
+
+<Base
+  title="About"
+  description="Marlo is a proactive women's health companion, Australian owned and built. The brand, the six messaging pillars, the Australian difference, and where the product is going."
+>
+  <PageHero
+    overline="About Marlo"
+    title="Not a tracker. A companion."
+    lead="Marlo exists because the system is fragmented, not because women are confused. We take the mental load away, turn scattered data into a story, and make sure you never walk into an appointment empty-handed."
+  />
+
+  <!-- ─────────────────────────────────────────────────────── the offering -->
+  <section class="section">
+    <div class="page">
+      <SectionHeader
+        overline="What we’re really offering"
+        title="We don’t sell tracking."
+        lead="The real product is the feeling of finally being believed, seen and supported. Not “empowered” in a generic wellness sense — genuinely looked after."
+        class="reveal"
+      />
+
+      <ul class="offering reveal">
+        {offering.map((o) => <li class="offering-item">{o}</li>)}
+      </ul>
+
+      <p class="offering-sum reveal">
+        <span class="in-clay">Relief from the mental load.</span> She should leave every interaction
+        feeling seen, reassured, informed, believed, and in control of her own healthcare journey.
+      </p>
+    </div>
+  </section>
+
+  <!-- ───────────────────────────────────────────────────────── personality -->
+  <section class="section section-tint">
+    <div class="page personality-wrap">
+      <div class="reveal">
+        <p class="overline personality-kicker">If Marlo were a person</p>
+        <h2 class="h2">The friend who helps you make sense of things.</h2>
+        <dl class="personality">
+          {
+            personality.map((p) => (
+              <div class="personality-row">
+                <dt class="h4">{p.trait}</dt>
+                <dd class="small muted">{p.body}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+
+      <figure class="defining reveal" style="--delay:100ms">
+        <blockquote class="h1 defining-quote layer-up">
+          “No, that’s not normal. Let’s sort it out.”
+        </blockquote>
+        <figcaption class="overline defining-cap layer-up">The sentence that defines her</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ────────────────────────────────────────────────────────────- pillars -->
+  <section class="section">
+    <div class="page">
+      <SectionHeader
+        overline="Messaging pillars"
+        title="Six things we say, everywhere."
+        class="reveal"
+      />
+
+      <div class="grid grid-3 pillars">
+        {
+          pillars.map((p, i) => (
+            <article class="pillar reveal" style={`--delay:${(i % 3) * 80}ms`}>
+              <span class="numeral pillar-n">{p.n}</span>
+              <h3 class="h3 pillar-title">{p.title}</h3>
+              <p class="small muted">{p.body}</p>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────────────────────────────────────────────────────────- australia -->
+  <section class="section section-tint" id="australia">
+    <div class="page">
+      <SectionHeader
+        overline="The Australian difference"
+        title="Owned, built and regulated here."
+        lead="Marlo is built for the Australian healthcare system, and for the woman navigating it."
+        class="reveal"
+      />
+
+      <div class="grid grid-2 aus">
+        {
+          australia.map((a, i) => (
+            <article class="aus-item reveal" style={`--delay:${(i % 2) * 90}ms`}>
+              <h3 class="h3 aus-title">{a.title}</h3>
+              <p class="muted">{a.body}</p>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────────────────────────────────────────────────────────── roadmap -->
+  <section class="section" id="roadmap">
+    <div class="page">
+      <SectionHeader
+        overline="Where we’re going"
+        title="One companion, three phases."
+        class="reveal"
+      />
+
+      <div class="grid grid-3 phases">
+        {
+          phases.map((p, i) => (
+            <article class="phase reveal" style={`--delay:${i * 90}ms`}>
+              <div class="phase-head">
+                <span class="overline phase-tag">{p.tag}</span>
+                <span class="pill phase-status">{p.status}</span>
+              </div>
+              <h3 class="h3 phase-title">{p.title}</h3>
+              <ul class="phase-list">
+                {p.items.map((item) => (
+                  <li>{item}</li>
+                ))}
+              </ul>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────────────────────────────────────────────────────────── closing -->
+  <section class="section">
+    <div class="page">
+      <div class="block on-clay closing reveal">
+        <div class="layer-up">
+          <p class="overline closing-kicker">Thank you</p>
+          <h2 class="display closing-title">Seen.<br />Believed.<br />Supported.</h2>
+          <p class="closing-foot">
+            Everything the brand does should reinforce one feeling: finally being understood.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <CtaBand />
+</Base>
+
+<style>
+  .section-tint {
+    background: var(--cream-deep);
+  }
+
+  /* ------------------------------------------------------------ offering */
+  .offering {
+    list-style: none;
+    padding: 0;
+    margin-top: clamp(2.25rem, 1.5rem + 2.5vw, 3.5rem);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .offering-item {
+    font-family: var(--font-display);
+    font-weight: var(--display-weight);
+    font-size: clamp(1.15rem, 1rem + 1vw, 1.75rem);
+    line-height: 1;
+    padding: 0.7rem 1.35rem;
+    border-radius: var(--r-pill);
+    background: var(--sky);
+    color: var(--berry);
+  }
+
+  .offering-sum {
+    margin-top: clamp(2rem, 1.5rem + 2vw, 3rem);
+    font-family: var(--font-display);
+    font-weight: var(--display-weight);
+    font-size: clamp(1.3rem, 1.1rem + 1.4vw, 2rem);
+    line-height: 1.25;
+    letter-spacing: -0.015em;
+    max-width: 44rem;
+    text-wrap: balance;
+  }
+
+  /* --------------------------------------------------------- personality */
+  .personality-wrap {
+    display: grid;
+    gap: clamp(2.5rem, 1.5rem + 4vw, 4.5rem);
+    align-items: center;
+  }
+
+  @media (min-width: 60rem) {
+    .personality-wrap {
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    }
+  }
+
+  .personality-kicker {
+    color: var(--accent-display);
+    margin-bottom: 1.1rem;
+  }
+
+  .personality {
+    margin-top: 2rem;
+    display: grid;
+    gap: 1.25rem;
+  }
+
+  .personality-row {
+    padding-top: 1.1rem;
+    border-top: 1px solid var(--line);
+  }
+
+  .personality-row dt {
+    margin-bottom: 0.25rem;
+  }
+
+  .personality-row dd {
+    margin: 0;
+  }
+
+  .defining {
+    position: relative;
+    overflow: hidden;
+    margin: 0;
+    background: var(--butter);
+    border-radius: var(--r-xl);
+    padding: clamp(2rem, 1.5rem + 2.5vw, 3rem);
+    text-align: center;
+  }
+
+  .defining-quote {
+    max-width: 16ch;
+    margin-inline: auto;
+  }
+
+  .defining-cap {
+    margin-top: 1.5rem;
+    color: var(--ink-muted);
+  }
+
+  /* -------------------------------------------------------------- pillars */
+  .pillars {
+    margin-top: clamp(2.25rem, 1.5rem + 2.5vw, 3.5rem);
+    gap: clamp(2rem, 1rem + 2.5vw, 3rem) var(--s-xl);
+  }
+
+  .pillar {
+    padding-top: 1.25rem;
+    border-top: 2px solid var(--line-strong);
+  }
+
+  .pillar-n {
+    font-size: 1rem;
+    color: var(--accent-display);
+    display: block;
+    margin-bottom: 0.65rem;
+  }
+
+  .pillar-title {
+    margin-bottom: 0.6rem;
+  }
+
+  /* ------------------------------------------------------------ australia */
+  .aus {
+    margin-top: clamp(2.25rem, 1.5rem + 2.5vw, 3.5rem);
+    gap: clamp(2rem, 1rem + 2.5vw, 3rem) clamp(2rem, 1rem + 4vw, 4.5rem);
+  }
+
+  .aus-title {
+    margin-bottom: 0.7rem;
+  }
+
+  /* --------------------------------------------------------------- phases */
+  .phases {
+    margin-top: clamp(2.25rem, 1.5rem + 2.5vw, 3.5rem);
+  }
+
+  .phase {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    padding: clamp(1.4rem, 1rem + 1.2vw, 2rem);
+    box-shadow: var(--shadow-card);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .phase-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .phase-tag {
+    color: var(--accent-display);
+  }
+
+  .phase-status {
+    font-size: 0.6875rem;
+  }
+
+  .phase-title {
+    margin-bottom: 1.1rem;
+  }
+
+  .phase-list {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: 0.7rem;
+    font-size: var(--t-small);
+    color: var(--ink-muted);
+  }
+
+  .phase-list li {
+    padding-left: 1.1rem;
+    position: relative;
+    line-height: 1.45;
+  }
+
+  .phase-list li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.58em;
+    width: 0.35rem;
+    height: 0.35rem;
+    border-radius: 50%;
+    background: var(--berry);
+  }
+
+  /* -------------------------------------------------------------- closing */
+  .closing {
+    text-align: center;
+    padding-block: clamp(3rem, 2rem + 4vw, 5.5rem);
+  }
+
+  .closing-kicker {
+    color: rgba(251, 244, 226, 0.78);
+    margin-bottom: 1.5rem;
+  }
+
+  .closing-title {
+    line-height: 0.94;
+  }
+
+  .closing-foot {
+    margin-top: 2rem;
+    font-size: clamp(1.0625rem, 1rem + 0.3vw, 1.2rem);
+    line-height: 1.45;
+    max-width: 36rem;
+    margin-inline: auto;
+    color: var(--cream);
+  }
+</style>

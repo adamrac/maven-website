@@ -1,0 +1,104 @@
+---
+/**
+ * Waitlist capture.
+ *
+ * Set PUBLIC_WAITLIST_ENDPOINT in .env to the URL that should receive the POST
+ * (Formspree, Buttondown, a Lambda, whatever you land on). Until it's set this
+ * renders an email fallback rather than a form that silently does nothing.
+ */
+const endpoint = import.meta.env.PUBLIC_WAITLIST_ENDPOINT;
+---
+
+{
+  endpoint ? (
+    <form class="wl" method="POST" action={endpoint}>
+      <div class="wl-row">
+        <label class="sr-only" for="wl-email">
+          Email address
+        </label>
+        <input
+          class="wl-input"
+          id="wl-email"
+          type="email"
+          name="email"
+          required
+          autocomplete="email"
+          placeholder="you@email.com"
+        />
+        <button class="btn wl-btn" type="submit">
+          Join the waitlist
+        </button>
+      </div>
+      <p class="caption wl-note">
+        One email when Marlo opens. No newsletter, no sharing your address. Unsubscribe in a tap.
+      </p>
+    </form>
+  ) : (
+    <div class="wl">
+      <a class="btn" href="mailto:hello@marlohealth.com.au?subject=Marlo%20waitlist">
+        Email us to join the waitlist
+      </a>
+      <p class="caption wl-note">
+        One email when Marlo opens. No newsletter, no sharing your address.
+      </p>
+    </div>
+  )
+}
+
+<style>
+  .wl {
+    width: 100%;
+    max-width: 32rem;
+  }
+
+  .wl-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+
+  .wl-input {
+    flex: 1 1 14rem;
+    min-width: 0;
+    font: inherit;
+    font-size: 1rem;
+    padding: 1rem 1.25rem;
+    border-radius: var(--r-pill);
+    border: 2px solid var(--line-strong);
+    background: var(--paper);
+    color: var(--ink);
+  }
+
+  .wl-input::placeholder {
+    color: var(--ink-faint);
+  }
+
+  .wl-input:focus-visible {
+    outline: 2.5px solid var(--clay);
+    outline-offset: 2px;
+    border-color: transparent;
+  }
+
+  .wl-btn {
+    flex: 0 0 auto;
+  }
+
+  .wl-note {
+    margin-top: 0.85rem;
+  }
+
+  /* On a berry hero the field needs its own polarity */
+  :global(.on-berry) .wl-input {
+    background: rgba(251, 244, 226, 0.1);
+    border-color: rgba(251, 244, 226, 0.4);
+    color: var(--cream);
+  }
+
+  :global(.on-berry) .wl-input::placeholder {
+    color: rgba(251, 244, 226, 0.6);
+  }
+
+  :global(.on-berry) .wl-note {
+    color: var(--ink-inverse-muted);
+  }
+</style>

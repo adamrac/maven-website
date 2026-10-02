@@ -1,0 +1,31 @@
+---
+interface Props {
+  overline: string;
+  title: string;
+  lead: string;
+}
+const { overline, title, lead } = Astro.props;
+---
+
+<section class="phero on-berry">
+  <div class="page">
+    <p class="overline">{overline}</p>
+    <h1 class="h1 phero-title">{title}</h1>
+    <p class="lead phero-lead">{lead}</p>
+  </div>
+</section>
+
+<style>
+  .phero {
+    padding-block: clamp(3.5rem, 2rem + 7vw, 7.5rem);
+  }
+  .phero-title {
+    margin-top: 1.5rem;
+    max-width: 18ch;
+  }
+  .phero-lead {
+    margin-top: 1.75rem;
+    color: var(--ink-inverse-muted);
+    max-width: 40rem;
+  }
+</style>
