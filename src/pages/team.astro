@@ -1,0 +1,393 @@
+---
+import Base from '../layouts/Base.astro';
+import DownloadButton from '../components/DownloadButton.astro';
+import { withBase } from '../site';
+
+/*
+ * Our team. A first draft for the team to fill in.
+ *
+ * Each person should write their own short intro, in their own words, so it
+ * sounds personal (Natalie's feedback). Until someone's intro is in, their
+ * card says it's on its way. Add or remove people in `team` below.
+ *
+ * Headshots go in public/images/team/ (portrait, about 3:4) and are named in
+ * `photo`. Anyone without a photo shows their initials instead.
+ *
+ * Not linked from the nav or footer yet.
+ */
+
+type Tone = 'sky' | 'blush' | 'butter' | 'clay' | 'berry';
+
+interface Member {
+  name: string;
+  role?: string;
+  bio?: string;
+  /** File name in public/images/team/, e.g. 'bianca.jpg' */
+  photo?: string;
+  tone: Tone;
+}
+
+const team: Member[] = [
+  {
+    name: 'Bianca Scurry',
+    role: 'Registered osteopath',
+    bio: 'I’ve spent over six years in private clinical practice, supporting women through every stage of life. I’ve helped build Marlo from day one, alongside a team of dedicated people.',
+    tone: 'blush',
+  },
+  { name: 'Natalie', tone: 'butter' },
+  { name: 'Aaron', tone: 'sky' },
+  { name: 'Adam', tone: 'clay' },
+  { name: 'Michael Liolios', tone: 'berry' },
+];
+
+const initials = (name: string) =>
+  name
+    .split(/\s+/)
+    .map((w) => w[0])
+    .slice(0, 2)
+    .join('')
+    .toUpperCase();
+---
+
+<Base
+  title="Our team"
+  description="Meet the small Australian team behind Marlo, the women's health companion built so no woman has to walk into an appointment empty-handed again."
+>
+  <!-- ═════════════════════════════════════════════════════════ hero -->
+  <section class="section team-hero">
+    <div class="page">
+      <header class="head">
+        <h1 class="display team-title" data-split>The people behind Marlo.</h1>
+        <p class="head-sub reveal" style="--delay:250ms">
+          A small Australian team, building the health companion we wish we’d had.
+        </p>
+      </header>
+
+      <figure class="photo reveal" style="--delay:200ms" data-drift-area>
+        <span class="photo-blob pb-1" aria-hidden="true" data-drift="-24"></span>
+        <span class="photo-blob pb-2" aria-hidden="true" data-drift="28"></span>
+        <span class="photo-blob pb-3" aria-hidden="true" data-drift="-16"></span>
+        <img
+          src={withBase('/images/team.webp')}
+          alt="Four members of the Marlo team sitting together on a couch"
+          width="731"
+          height="452"
+          decoding="async"
+        />
+      </figure>
+    </div>
+  </section>
+
+  <!-- ═════════════════════════════════════════════════════ why we built it -->
+  <section class="panel on-berry why-sec">
+    <div class="page why">
+      <h2 class="display why-title" data-split>We’ve been there.</h2>
+      <div class="why-body">
+        <p class="lead reveal">
+          Many of us have lived through, or watched friends live through, the frustration of not
+          being heard or not finding a diagnosis.
+        </p>
+        <p class="reveal" style="--delay:100ms">
+          Being told everything looks normal when nothing feels normal. Being passed between
+          specialists who never talk to each other. Keeping track of it all on your own.
+        </p>
+        <p class="reveal" style="--delay:200ms">
+          We wanted to change that. So we built Marlo: one place to understand your body, organise
+          the chaos, and walk into every appointment with something to show, not just something to
+          say.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════════════════════════════════════════════════════════ the team -->
+  <section class="section" id="people">
+    <div class="page">
+      <header class="head">
+        <h2 class="h1" data-split>Say hello.</h2>
+        <p class="head-sub reveal">The people building Marlo, in their own words.</p>
+      </header>
+
+      <ul class="people">
+        {
+          team.map((m, i) => (
+            <li class="person reveal" style={`--delay:${(i % 3) * 90}ms`}>
+              {m.photo ? (
+                <span class:list={['portrait', `avatar-${m.tone}`]}>
+                  <img
+                    src={withBase(`/images/team/${m.photo}`)}
+                    alt={`Portrait of ${m.name}`}
+                    width="600"
+                    height="800"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </span>
+              ) : (
+                <span class:list={['avatar', `avatar-${m.tone}`]} aria-hidden="true">
+                  <span class="numeral">{initials(m.name)}</span>
+                </span>
+              )}
+              <h3 class="h3 person-name">{m.name}</h3>
+              <p class="person-role">{m.role ?? 'Role coming soon'}</p>
+              <p class:list={['small', 'person-bio', !m.bio && 'is-pending']}>
+                {m.bio ?? 'Their intro is on its way.'}
+              </p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- ═════════════════════════════════════════════════════════ closing -->
+  <section class="panel on-deep close-sec">
+    <div class="page close">
+      <div class="close-card">
+        <h2 class="h2">Are you a practitioner?</h2>
+        <p class="muted">
+          We’d love to work with the people who see these patients every day.
+        </p>
+        <a class="btn btn-secondary" href={withBase('/practitioners')}>For practitioners</a>
+      </div>
+      <div class="close-card">
+        <h2 class="h2">Ready to feel understood?</h2>
+        <p class="muted">Download Marlo and set it up in a few minutes.</p>
+        <DownloadButton />
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  @keyframes blob-morph {
+    0% {
+      border-radius: 54% 46% 48% 52% / 50% 52% 48% 50%;
+      rotate: 0deg;
+    }
+    50% {
+      border-radius: 40% 60% 62% 38% / 58% 40% 60% 42%;
+    }
+    100% {
+      border-radius: 60% 40% 44% 56% / 42% 60% 40% 58%;
+      rotate: 40deg;
+    }
+  }
+
+  /* ═════════════════════════════════════════════════════════════ hero */
+  .team-hero {
+    padding-block: clamp(8rem, 5rem + 8vw, 12rem) clamp(3rem, 2rem + 4vw, 5rem);
+  }
+
+  .team-title {
+    max-width: 12ch;
+    margin-inline: auto;
+  }
+
+  .photo {
+    position: relative;
+    margin: clamp(2.5rem, 1.5rem + 3vw, 4rem) auto 0;
+    max-width: 46rem;
+    padding-top: clamp(1.5rem, 1rem + 3vw, 4rem);
+    isolation: isolate;
+  }
+
+  .photo img {
+    width: 100%;
+    height: auto;
+  }
+
+  .photo-blob {
+    position: absolute;
+    border-radius: 54% 46% 48% 52% / 50% 52% 48% 50%;
+    z-index: -1;
+    aspect-ratio: 1;
+    animation: blob-morph 16s ease-in-out infinite alternate;
+  }
+
+  .pb-1 {
+    width: 52%;
+    background: var(--sky);
+    left: 4%;
+    top: 0;
+  }
+
+  .pb-2 {
+    width: 40%;
+    background: var(--blush);
+    right: 6%;
+    top: 6%;
+    animation-delay: -5s;
+  }
+
+  .pb-3 {
+    width: 18%;
+    background: var(--butter);
+    left: -4%;
+    bottom: 12%;
+    animation-delay: -9s;
+  }
+
+  /* ═════════════════════════════════════════════════════════════ why */
+  .why-sec {
+    padding-block: clamp(4.5rem, 2rem + 7vw, 8.5rem);
+  }
+
+  .why {
+    display: grid;
+    gap: clamp(2.5rem, 1.5rem + 3vw, 4rem);
+  }
+
+  @media (min-width: 60rem) {
+    .why {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      align-items: end;
+    }
+  }
+
+  .why-title {
+    font-size: clamp(2.6rem, 1.2rem + 5vw, 6rem);
+    max-width: 10ch;
+  }
+
+  .why-body {
+    display: grid;
+    gap: 1.1rem;
+    max-width: 34rem;
+    color: var(--ink-inverse-muted);
+  }
+
+  .why-body .lead {
+    color: var(--cream);
+  }
+
+  /* ══════════════════════════════════════════════════════════ people */
+  .people {
+    list-style: none;
+    padding: 0;
+    margin-top: clamp(2.5rem, 1.5rem + 3vw, 4rem);
+    display: grid;
+    gap: clamp(1rem, 0.5rem + 1.2vw, 1.5rem);
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr));
+  }
+
+  .person {
+    background: var(--paper);
+    border-radius: 28px;
+    padding: clamp(1.5rem, 1rem + 1.4vw, 2rem);
+    box-shadow:
+      0 0 0 1px rgba(117, 13, 50, 0.06),
+      0 14px 30px -22px rgba(90, 9, 38, 0.35);
+  }
+
+  .avatar {
+    width: 4.5rem;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-size: 1.6rem;
+    line-height: 1;
+    margin-bottom: 1.5rem;
+    transition: transform 0.5s var(--ease-spring);
+  }
+
+  .portrait {
+    display: block;
+    aspect-ratio: 4 / 5;
+    border-radius: 20px;
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+  }
+
+  .portrait img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 50% 20%;
+    transition: transform 0.7s var(--ease-out);
+  }
+
+  .person:hover .portrait img {
+    transform: scale(1.04);
+  }
+
+  .person:hover .avatar {
+    transform: rotate(-8deg) scale(1.06);
+  }
+
+  .avatar-sky {
+    background: var(--sky);
+  }
+  .avatar-blush {
+    background: var(--blush);
+  }
+  .avatar-butter {
+    background: var(--butter);
+  }
+  .avatar-clay {
+    background: var(--clay);
+    color: var(--cream);
+  }
+  .avatar-berry {
+    background: var(--berry);
+    color: var(--cream);
+  }
+
+  .person-role {
+    margin-top: 0.4rem;
+    font-size: var(--t-small);
+    font-weight: 700;
+    color: var(--ink-muted);
+  }
+
+  .person-bio {
+    margin-top: 1rem;
+  }
+
+  .person-bio.is-pending {
+    color: var(--ink-faint);
+    font-style: italic;
+  }
+
+  /* ═════════════════════════════════════════════════════════ closing */
+  .close-sec {
+    padding-block: clamp(3.5rem, 2rem + 5vw, 6.5rem);
+    margin-bottom: var(--inset);
+  }
+
+  .close {
+    display: grid;
+    gap: clamp(1rem, 0.5rem + 1.2vw, 1.5rem);
+  }
+
+  @media (min-width: 52rem) {
+    .close {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .close-card {
+    background: var(--paper);
+    border-radius: 28px;
+    padding: clamp(1.75rem, 1rem + 2.5vw, 3rem);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .close-card .btn {
+    margin-top: auto;
+  }
+
+  .close-card p {
+    margin-bottom: 0.75rem;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .photo-blob {
+      animation: none;
+    }
+  }
+</style>
