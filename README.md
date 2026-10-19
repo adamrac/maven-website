@@ -39,6 +39,16 @@ download button.
 The old Features, Safety and About pages, and the components only they used,
 are in `archive/`. They are not built.
 
+## Draft pages
+
+Two extra pages, built for the team to audit. Neither is linked from the nav
+or footer yet.
+
+| Page | What it is |
+| --- | --- |
+| `/practitioners` (`practitioners.astro`) | For practitioners. Built from Bianca's "Marlo - Your Health Companion" outreach doc: a welcome from Bianca, who we are, why we exist, the two phases, the Australian difference and an invitation to partner. "Start a conversation" needs `PUBLIC_PARTNER_EMAIL` set. |
+| `/team` (`team.astro`) | Our team. Group photo, why we built Marlo, and a card per person. Edit `team` at the top of the file. Bios should be written by each person; headshots go in `public/images/team/`. |
+
 ## Copy rules
 
 The reader is a woman who wants help with her health, not a tech person.

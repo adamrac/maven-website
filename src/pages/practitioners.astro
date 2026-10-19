@@ -1,0 +1,703 @@
+---
+import Base from '../layouts/Base.astro';
+import StoryCard from '../components/StoryCard.astro';
+import Icon from '../components/Icon.astro';
+import { withBase, PARTNER_EMAIL } from '../site';
+
+/*
+ * For practitioners. A first draft built from "Marlo - Your Health Companion"
+ * (Bianca's practitioner outreach doc), for the team to audit.
+ *
+ *   hero → welcome from Bianca → who we are → why we exist →
+ *   one companion, two phases → the Australian difference → let's talk.
+ *
+ * Not linked from the nav or footer yet.
+ */
+
+const pillars = [
+  {
+    tone: 'blush' as const,
+    blob: 'cream' as const,
+    icon: 'chart' as const,
+    title: 'Understand',
+    body: 'Cycle, mood, energy, sleep and history seen as one picture, explained in plain language.',
+  },
+  {
+    tone: 'butter' as const,
+    blob: 'blush' as const,
+    icon: 'calendar' as const,
+    title: 'Organise',
+    body: 'Symptoms, appointments, notes and reminders in one place, replacing the chaos, not adding to it.',
+  },
+  {
+    tone: 'clay' as const,
+    blob: 'butter' as const,
+    icon: 'note' as const,
+    title: 'Advocate',
+    body: 'A documented history and trend reports. Something to show in the appointment, not just say.',
+  },
+];
+
+const live = [
+  'Symptom, mood, cycle and sleep tracking',
+  'Pattern and trend insights',
+  'The Marlo Health Report',
+  'Calendar, reminders and notes',
+  'Resource hub and moderated community',
+];
+
+const roadmap = [
+  'Clinician directory and booking',
+  'In-app video consultations',
+  'Consent-based data sharing',
+  'Clinician portal, resources and tasks',
+];
+
+const trust = [
+  {
+    tone: 'berry',
+    icon: 'lock' as const,
+    title: 'Data stays in Australia',
+    body: 'Stored onshore and handled under Australian privacy law.',
+  },
+  {
+    tone: 'butter',
+    icon: 'shield' as const,
+    title: 'Built for Medicare',
+    body: 'Designed around GP referrals, specialist waitlists and real Medicare pathways.',
+  },
+  {
+    tone: 'clay',
+    icon: 'heart' as const,
+    title: 'A trust position, not a tagline',
+    body: 'Australian owned and built, for the Australian healthcare system.',
+  },
+];
+
+const practitioners = [
+  'GPs',
+  'Physiotherapists',
+  'Osteopaths',
+  'Dietitians',
+  'Psychologists',
+  'Pelvic health specialists',
+];
+
+const contactHref = PARTNER_EMAIL
+  ? `mailto:${PARTNER_EMAIL}?subject=${encodeURIComponent('Partnering with Marlo')}`
+  : '';
+---
+
+<Base
+  title="For practitioners"
+  description="Marlo is an Australian women's health companion built to support clinical care, not replace it. We'd love to partner with the practitioners who see these patients every day."
+>
+  <!-- ═════════════════════════════════════════════════════════ hero -->
+  <section class="section pr-hero">
+    <div class="page">
+      <header class="head">
+        <h1 class="display pr-title" data-split>Better care, together.</h1>
+        <p class="head-sub reveal" style="--delay:250ms">
+          Marlo is an Australian women’s health app, built from the ground up to support clinical
+          care, not replace it.
+        </p>
+        <div class="cluster pr-actions reveal" style="--delay:400ms">
+          <a class="btn" href="#talk" data-magnetic>Start a conversation</a>
+          <a class="btn btn-secondary" href={withBase('/team')}>Meet the team</a>
+        </div>
+      </header>
+    </div>
+  </section>
+
+  <!-- ═════════════════════════════════════════════ welcome from bianca -->
+  <section class="section pr-welcome-sec">
+    <div class="page welcome">
+      <div class="welcome-copy">
+        <h2 class="h1" data-split>We’re so glad you’re here.</h2>
+        <div class="welcome-body reveal" style="--delay:150ms">
+          <p>
+            I’d like to introduce myself. I’m <strong>Bianca Scurry</strong>, a registered osteopath
+            with over six years in private clinical practice, supporting women through every stage
+            of life.
+          </p>
+          <p>
+            I’ve helped build Marlo from day one, alongside a team of dedicated people. Many of us
+            have lived through, or watched friends live through, the frustration of not being heard
+            or not finding a diagnosis. We wanted to change that.
+          </p>
+        </div>
+      </div>
+
+      <figure class="welcome-art reveal" style="--delay:120ms" data-drift-area>
+        <span class="welcome-blob wb-1" aria-hidden="true" data-drift="-20"></span>
+        <span class="welcome-blob wb-2" aria-hidden="true" data-drift="24"></span>
+        <img
+          src={withBase('/images/team.webp')}
+          alt="Four members of the Marlo team sitting together on a couch"
+          width="731"
+          height="452"
+          loading="lazy"
+          decoding="async"
+        />
+        <a class="welcome-link" href={withBase('/team')}>
+          Meet the team <span aria-hidden="true">→</span>
+        </a>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ═════════════════════════════════════════════════════ who we are -->
+  <section class="section pr-who" id="who">
+    <div class="page">
+      <header class="head">
+        <h2 class="h1" data-split>Who we are.</h2>
+        <p class="head-sub reveal">
+          A proactive health companion that helps women understand their bodies, connect the dots
+          across their health, and advocate for better care.
+        </p>
+      </header>
+
+      <div class="pillars">
+        {
+          pillars.map((p, i) => (
+            <div class="pillar reveal" style={`--delay:${i * 100}ms`}>
+              <StoryCard {...p} />
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════ why we exist -->
+  <section class="panel on-berry why-sec" id="why">
+    <div class="page why">
+      <h2 class="display why-title" data-split>
+        The system, not the woman, is the problem.
+      </h2>
+      <div class="why-body">
+        <p class="lead reveal">
+          She’s been told everything looks normal while nothing feels normal, passed between
+          specialists with no continuity, and left to track, research and remember it all on her
+          own.
+        </p>
+        <p class="reveal" style="--delay:100ms">
+          Marlo takes that mental load off her. One place to understand her body, organise the
+          chaos, and walk into every appointment with something to show, not just something to say.
+        </p>
+        <p class="reveal" style="--delay:200ms">
+          It’s not a diagnostic tool, and it’s not generic wellness content. It’s a companion that
+          works alongside doctors, built on Australian clinical guidelines, so she leaves every
+          interaction feeling seen, believed and finally understood.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ two phases -->
+  <section class="section" id="phases">
+    <div class="page">
+      <header class="head">
+        <h2 class="h1" data-split>One companion, two phases.</h2>
+      </header>
+
+      <div class="phases">
+        <article class="phase phase-a reveal">
+          <div class="phase-copy">
+            <span class="phase-tag numeral" aria-hidden="true">A</span>
+            <h3 class="h2 phase-title">Live and in action</h3>
+            <p class="muted phase-lead">Available in the app today.</p>
+            <ul class="bullets phase-list">
+              {live.map((item) => <li>{item}</li>)}
+            </ul>
+          </div>
+          <div class="phase-shot">
+            <img
+              src={withBase('/images/app-today.webp')}
+              alt="The Marlo app's daily check-in screen, with tiles for symptoms, mood, cycle, sleep, body and sex"
+              width="387"
+              height="647"
+              loading="lazy"
+              decoding="async"
+            />
+          </div>
+        </article>
+
+        <article class="phase phase-b reveal" style="--delay:120ms">
+          <div class="phase-copy">
+            <span class="phase-tag numeral" aria-hidden="true">B</span>
+            <h3 class="h2 phase-title">On our roadmap</h3>
+            <p class="muted phase-lead">
+              Marlo is also being built to connect women with the care they need. We’d love to hear
+              from the clinicians who’ll work alongside it, so we get the details right as we go.
+              We hope to feature:
+            </p>
+            <ul class="bullets phase-list">
+              {roadmap.map((item) => <li>{item}</li>)}
+            </ul>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════ the australian difference -->
+  <section class="section pr-trust" id="trust">
+    <div class="page">
+      <header class="head">
+        <h2 class="h1" data-split>Australian, through and through.</h2>
+      </header>
+
+      <ul class="trust">
+        {
+          trust.map((t, i) => (
+            <li class:list={['trust-item', `trust-${t.tone}`, 'reveal']} style={`--delay:${i * 90}ms`}>
+              <span class="trust-icon" aria-hidden="true">
+                <Icon name={t.icon} />
+              </span>
+              <h3 class="h3 trust-title">{t.title}</h3>
+              <p class="trust-body">{t.body}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- ═════════════════════════════════════════════════════ let's talk -->
+  <section class="panel on-deep talk-sec" id="talk" data-drift-area>
+    <span class="talk-blob tb-1" aria-hidden="true" data-drift="-30"></span>
+    <span class="talk-blob tb-2" aria-hidden="true" data-drift="26"></span>
+
+    <div class="page talk">
+      <header class="head">
+        <h2 class="h1" data-split>Why we’re reaching out.</h2>
+        <p class="head-sub reveal">
+          Marlo already has clinical backing built into its foundations, but a tool like this is
+          only as good as its connection to real practice.
+        </p>
+      </header>
+
+      <p class="talk-body reveal" style="--delay:100ms">
+        We’re looking to build partnerships with women’s health practitioners and the allied health
+        professionals who see these patients every day.
+      </p>
+
+      <ul class="who-list reveal" style="--delay:180ms" aria-label="Practitioners we’d love to work with">
+        {practitioners.map((p) => <li class="who-chip">{p}</li>)}
+      </ul>
+
+      <p class="talk-ask reveal" style="--delay:260ms">
+        If you’d like to see the fuller picture, including our roadmap, and how a partnership could
+        work, we’d love to start the conversation.
+      </p>
+
+      <div class="talk-cta reveal" style="--delay:340ms">
+        {
+          contactHref ? (
+            <a class="btn" href={contactHref} data-magnetic>
+              Start a conversation
+            </a>
+          ) : (
+            <p class="small muted">Contact details coming soon.</p>
+          )
+        }
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  @keyframes blob-morph {
+    0% {
+      border-radius: 54% 46% 48% 52% / 50% 52% 48% 50%;
+      rotate: 0deg;
+    }
+    50% {
+      border-radius: 40% 60% 62% 38% / 58% 40% 60% 42%;
+    }
+    100% {
+      border-radius: 60% 40% 44% 56% / 42% 60% 40% 58%;
+      rotate: 40deg;
+    }
+  }
+
+  /* ═════════════════════════════════════════════════════════════ hero */
+  .pr-hero {
+    padding-block: clamp(8rem, 5rem + 8vw, 12rem) clamp(2rem, 1rem + 3vw, 4rem);
+  }
+
+  .pr-title {
+    max-width: 11ch;
+    margin-inline: auto;
+  }
+
+  .pr-actions {
+    margin-top: 2.25rem;
+    justify-content: center;
+  }
+
+  /* ══════════════════════════════════════════════════════════ welcome */
+  .pr-welcome-sec {
+    padding-top: clamp(2rem, 1rem + 3vw, 4rem);
+  }
+
+  .welcome {
+    display: grid;
+    gap: clamp(3rem, 2rem + 4vw, 5rem);
+    align-items: center;
+  }
+
+  @media (min-width: 60rem) {
+    .welcome {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    }
+  }
+
+  .welcome-body {
+    margin-top: 1.75rem;
+    display: grid;
+    gap: 1.1rem;
+    max-width: 34rem;
+    font-size: var(--t-lead);
+    line-height: 1.5;
+  }
+
+  .welcome-art {
+    position: relative;
+    margin: 0;
+    padding: clamp(1.5rem, 1rem + 2vw, 3rem) clamp(0.5rem, 0.2rem + 1vw, 1rem) 0;
+    isolation: isolate;
+  }
+
+  .welcome-art img {
+    width: 100%;
+    height: auto;
+  }
+
+  .welcome-blob {
+    position: absolute;
+    border-radius: 54% 46% 48% 52% / 50% 52% 48% 50%;
+    z-index: -1;
+    aspect-ratio: 1;
+    animation: blob-morph 16s ease-in-out infinite alternate;
+  }
+
+  .wb-1 {
+    width: 72%;
+    background: var(--sky);
+    left: 4%;
+    top: -6%;
+  }
+
+  .wb-2 {
+    width: 40%;
+    background: var(--blush);
+    right: 0;
+    top: 12%;
+    animation-delay: -6s;
+  }
+
+  .welcome-link {
+    display: inline-flex;
+    gap: 0.4rem;
+    margin-top: 1.25rem;
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .welcome-link:hover {
+    text-decoration: underline;
+  }
+
+  /* ══════════════════════════════════════════════════════════ pillars */
+  .pillars {
+    margin-top: clamp(2.5rem, 1.5rem + 3vw, 4rem);
+    display: grid;
+    gap: clamp(1rem, 0.5rem + 1.2vw, 1.5rem);
+  }
+
+  @media (min-width: 52rem) {
+    .pillars {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .pillars :global(.card-body) {
+      min-height: calc(1.55em * 3);
+    }
+  }
+
+  .pillar {
+    display: flex;
+  }
+
+  .pillar > :global(*) {
+    flex: 1;
+  }
+
+  /* ═════════════════════════════════════════════════════════════ why */
+  .why-sec {
+    padding-block: clamp(4.5rem, 2rem + 7vw, 8.5rem);
+  }
+
+  .why {
+    display: grid;
+    gap: clamp(2.5rem, 1.5rem + 3vw, 4rem);
+  }
+
+  @media (min-width: 60rem) {
+    .why {
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+      align-items: end;
+    }
+  }
+
+  .why-title {
+    font-size: clamp(2.5rem, 1.2rem + 4.6vw, 5.5rem);
+    max-width: 12ch;
+  }
+
+  .why-body {
+    display: grid;
+    gap: 1.1rem;
+    max-width: 34rem;
+    color: var(--ink-inverse-muted);
+  }
+
+  .why-body .lead {
+    color: var(--cream);
+  }
+
+  /* ══════════════════════════════════════════════════════════ phases */
+  .phases {
+    margin-top: clamp(2.5rem, 1.5rem + 3vw, 4rem);
+    display: grid;
+    gap: clamp(1rem, 0.5rem + 1.2vw, 1.5rem);
+  }
+
+  @media (min-width: 60rem) {
+    .phases {
+      grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr);
+    }
+  }
+
+  .phase {
+    border-radius: var(--r-xl);
+    padding: clamp(1.75rem, 1rem + 2.5vw, 3.25rem);
+    overflow: hidden;
+    position: relative;
+  }
+
+  .phase-a {
+    background: var(--sky);
+    display: grid;
+    gap: 2rem;
+  }
+
+  @media (min-width: 40rem) {
+    .phase-a {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 0.7fr);
+      padding-bottom: 0;
+    }
+  }
+
+  .phase-b {
+    background: var(--blush);
+  }
+
+  .phase-tag {
+    width: 3rem;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: var(--paper);
+    color: var(--clay);
+    font-size: 1.5rem;
+    line-height: 1;
+  }
+
+  .phase-title {
+    margin-top: 1.25rem;
+  }
+
+  .phase-lead {
+    margin-top: 0.85rem;
+    max-width: 30rem;
+  }
+
+  .phase-list {
+    margin-top: 1.5rem;
+  }
+
+  .phase-shot {
+    align-self: end;
+    max-width: 17rem;
+    margin-inline: auto;
+    width: 100%;
+  }
+
+  .phase-shot img {
+    width: 100%;
+    height: auto;
+    border-radius: 26px 26px 0 0;
+    box-shadow: 0 -10px 30px -18px rgba(90, 9, 38, 0.35);
+  }
+
+  @media (max-width: 39.99rem) {
+    .phase-shot img {
+      border-radius: 22px;
+    }
+  }
+
+  /* ══════════════════════════════════════════════════════════════ trust */
+  .pr-trust {
+    padding-top: 0;
+  }
+
+  .trust {
+    list-style: none;
+    padding: 0;
+    margin-top: clamp(2.5rem, 1.5rem + 3vw, 4rem);
+    display: grid;
+    gap: clamp(1rem, 0.5rem + 1.2vw, 1.5rem);
+  }
+
+  @media (min-width: 52rem) {
+    .trust {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  .trust-item {
+    border-radius: 28px;
+    padding: clamp(1.5rem, 1rem + 1.6vw, 2.25rem);
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .trust-berry {
+    background: var(--berry);
+    color: var(--cream);
+  }
+
+  .trust-butter {
+    background: var(--butter);
+  }
+
+  .trust-clay {
+    background: var(--clay);
+    color: var(--cream);
+  }
+
+  .trust-icon {
+    width: 3.2rem;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: var(--paper);
+    color: var(--berry);
+    padding: 0.85rem;
+    display: grid;
+    margin-bottom: 1.5rem;
+  }
+
+  .trust-body {
+    font-size: var(--t-small);
+    line-height: 1.55;
+  }
+
+  /* ══════════════════════════════════════════════════════════════ talk */
+  .talk-sec {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    padding-block: clamp(4.5rem, 2rem + 7vw, 8.5rem);
+    margin-bottom: var(--inset);
+  }
+
+  .talk {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .talk-body,
+  .talk-ask {
+    max-width: 36rem;
+    margin-top: 1.5rem;
+  }
+
+  .talk-ask {
+    font-weight: 700;
+  }
+
+  .who-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 2rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.6rem;
+    max-width: 44rem;
+  }
+
+  .who-chip {
+    background: var(--paper);
+    border-radius: var(--r-pill);
+    padding: 0.6rem 1.2rem;
+    font-weight: 600;
+    font-size: var(--t-small);
+    transition: transform 0.35s var(--ease-spring), background-color 0.25s ease;
+  }
+
+  .who-chip:hover {
+    transform: translateY(-3px) rotate(-1.5deg);
+    background: var(--sky);
+  }
+
+  .talk-cta {
+    margin-top: 2.25rem;
+  }
+
+  .talk-blob {
+    position: absolute;
+    border-radius: 54% 46% 48% 52% / 50% 52% 48% 50%;
+    z-index: -1;
+    aspect-ratio: 1;
+    animation: blob-morph 17s ease-in-out infinite alternate;
+  }
+
+  .tb-1 {
+    width: clamp(8rem, 18vw, 15rem);
+    background: var(--butter);
+    left: -4%;
+    bottom: -8%;
+  }
+
+  .tb-2 {
+    width: clamp(6rem, 12vw, 10rem);
+    background: var(--blush);
+    right: 4%;
+    top: -5%;
+    animation-delay: -5s;
+  }
+
+  @media (max-width: 40rem) {
+    .tb-1 {
+      left: -20%;
+    }
+    .tb-2 {
+      right: -12%;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .welcome-blob,
+    .talk-blob {
+      animation: none;
+    }
+  }
+</style>

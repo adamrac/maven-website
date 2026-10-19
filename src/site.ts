@@ -17,3 +17,10 @@ const BASE = import.meta.env.BASE_URL.replace(/\/$/, '');
 export const withBase = (path: string) => `${BASE}${path}`;
 
 export const DOWNLOAD_ANCHOR = withBase('/#download');
+
+/**
+ * Where "Start a conversation" on the practitioners page goes. Until it's set,
+ * that page says contact details are coming soon.
+ *   PUBLIC_PARTNER_EMAIL=partners@...
+ */
+export const PARTNER_EMAIL: string = import.meta.env.PUBLIC_PARTNER_EMAIL ?? '';
