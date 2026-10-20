@@ -41,8 +41,7 @@ are in `archive/`. They are not built.
 
 ## Draft pages
 
-Two extra pages, built for the team to audit. Neither is linked from the nav
-or footer yet.
+Two extra pages, linked from the footer under "About us" (not the top nav).
 
 | Page | What it is |
 | --- | --- |

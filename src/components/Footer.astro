@@ -26,6 +26,13 @@ const columns = [
     title: 'Your safety',
     links: [{ href: withBase('/#safe'), label: 'Safety & privacy' }],
   },
+  {
+    title: 'About us',
+    links: [
+      { href: withBase('/team'), label: 'Our team' },
+      { href: withBase('/practitioners'), label: 'For practitioners' },
+    ],
+  },
 ];
 ---
 
@@ -127,10 +134,24 @@ const columns = [
     max-width: 18rem;
   }
 
+  /* Four columns: 2 × 2 until there's room for all four in one row. */
   .footer-nav {
     display: grid;
     gap: var(--s-2xl);
     grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+  }
+
+  @media (min-width: 56rem) {
+    .footer-nav {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 75rem) {
+    .footer-nav {
+      grid-template-columns: repeat(4, auto);
+      justify-content: space-between;
+    }
   }
 
   .footer-col-title {
