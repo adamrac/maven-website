@@ -4,13 +4,14 @@ import DownloadButton from '../components/DownloadButton.astro';
 import { withBase } from '../site';
 
 /*
- * Our team. A first draft for the team to fill in.
+ * Our team. A draft for the team to check.
  *
- * Each person should write their own short intro, in their own words, so it
- * sounds personal (Natalie's feedback). Until someone's intro is in, their
- * card says it's on its way. Add or remove people in `team` below.
+ * Roles come from the "Roles and Responsibilities" working doc. Intros are
+ * drafted from each person's role, in the first person, for them to rewrite
+ * in their own words (Natalie's feedback). Bianca's is from her outreach doc.
+ * Anyone without an intro shows "Their intro is on its way."
  *
- * Headshots go in public/images/team/ (portrait, about 3:4) and are named in
+ * Headshots go in public/images/team/ (720×960 WebP) and are named in
  * `photo`. Anyone without a photo shows their initials instead.
  *
  * Not linked from the nav or footer yet.
@@ -22,22 +23,46 @@ interface Member {
   name: string;
   role?: string;
   bio?: string;
-  /** File name in public/images/team/, e.g. 'bianca.jpg' */
+  /** File name in public/images/team/, e.g. 'bianca.webp' */
   photo?: string;
   tone: Tone;
 }
 
 const team: Member[] = [
   {
+    name: 'Natalie',
+    role: 'Co-founder & CEO',
+    bio: 'I lead Marlo day to day, keeping our team on track and building relationships with the clinicians and partners who share our goal. My job is making sure everything we build earns women’s trust.',
+    photo: 'natalie.webp',
+    tone: 'butter',
+  },
+  {
+    name: 'Adam',
+    role: 'Co-founder & CTO',
+    bio: 'I designed and built the Marlo app, and I look after everything behind the scenes. That means keeping it secure, keeping it private, and keeping your health information stored here in Australia.',
+    tone: 'clay',
+  },
+  {
     name: 'Bianca Scurry',
-    role: 'Registered osteopath',
-    bio: 'I’ve spent over six years in private clinical practice, supporting women through every stage of life. I’ve helped build Marlo from day one, alongside a team of dedicated people.',
+    role: 'Clinical Lead',
+    bio: 'I’ve spent over six years in private clinical practice, supporting women through every stage of life. I’ve helped build Marlo from day one, and I check that every bit of health information in it is safe and accurate.',
+    photo: 'bianca.webp',
     tone: 'blush',
   },
-  { name: 'Natalie', tone: 'butter' },
-  { name: 'Aaron', tone: 'sky' },
-  { name: 'Adam', tone: 'clay' },
-  { name: 'Michael Liolios', tone: 'berry' },
+  {
+    name: 'Michael Liolios',
+    role: 'Head of Marketing',
+    bio: 'I look after how Marlo shows up in the world, from our brand and the way we talk to how women and practitioners first hear about us. I want every woman who needs Marlo to find it.',
+    photo: 'michael.webp',
+    tone: 'berry',
+  },
+  {
+    name: 'Aaron',
+    role: 'Content Creator',
+    bio: 'I make the videos, posts and stories you’ll see from Marlo. I want to help women understand their health a little better, and feel a lot less alone in it.',
+    photo: 'aaron.webp',
+    tone: 'sky',
+  },
 ];
 
 const initials = (name: string) =>
@@ -69,7 +94,7 @@ const initials = (name: string) =>
         <span class="photo-blob pb-3" aria-hidden="true" data-drift="-16"></span>
         <img
           src={withBase('/images/team.webp')}
-          alt="Four members of the Marlo team sitting together on a couch"
+          alt="Natalie, Bianca, Michael and Aaron from the Marlo team, sitting together on a couch"
           width="731"
           height="452"
           decoding="async"
@@ -105,7 +130,7 @@ const initials = (name: string) =>
     <div class="page">
       <header class="head">
         <h2 class="h1" data-split>Say hello.</h2>
-        <p class="head-sub reveal">The people building Marlo, in their own words.</p>
+        <p class="head-sub reveal">Who we are, and what each of us looks after.</p>
       </header>
 
       <ul class="people">
@@ -117,14 +142,14 @@ const initials = (name: string) =>
                   <img
                     src={withBase(`/images/team/${m.photo}`)}
                     alt={`Portrait of ${m.name}`}
-                    width="600"
-                    height="800"
+                    width="720"
+                    height="960"
                     loading="lazy"
                     decoding="async"
                   />
                 </span>
               ) : (
-                <span class:list={['avatar', `avatar-${m.tone}`]} aria-hidden="true">
+                <span class:list={['portrait', 'portrait-empty', `avatar-${m.tone}`]} aria-hidden="true">
                   <span class="numeral">{initials(m.name)}</span>
                 </span>
               )}
@@ -262,13 +287,32 @@ const initials = (name: string) =>
   }
 
   /* ══════════════════════════════════════════════════════════ people */
+  /* Up to three a row, with a short last row centred (five people: 3 + 2). */
   .people {
+    --gap: clamp(1rem, 0.5rem + 1.2vw, 1.5rem);
     list-style: none;
     padding: 0;
     margin-top: clamp(2.5rem, 1.5rem + 3vw, 4rem);
-    display: grid;
-    gap: clamp(1rem, 0.5rem + 1.2vw, 1.5rem);
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr));
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--gap);
+  }
+
+  .person {
+    width: 100%;
+  }
+
+  @media (min-width: 40rem) {
+    .person {
+      width: calc((100% - var(--gap)) / 2);
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .person {
+      width: calc((100% - 2 * var(--gap)) / 3);
+    }
   }
 
   .person {
@@ -278,18 +322,6 @@ const initials = (name: string) =>
     box-shadow:
       0 0 0 1px rgba(117, 13, 50, 0.06),
       0 14px 30px -22px rgba(90, 9, 38, 0.35);
-  }
-
-  .avatar {
-    width: 4.5rem;
-    aspect-ratio: 1;
-    border-radius: 50%;
-    display: grid;
-    place-items: center;
-    font-size: 1.6rem;
-    line-height: 1;
-    margin-bottom: 1.5rem;
-    transition: transform 0.5s var(--ease-spring);
   }
 
   .portrait {
@@ -308,11 +340,23 @@ const initials = (name: string) =>
     transition: transform 0.7s var(--ease-out);
   }
 
+  /* No headshot yet: same size as a photo, so cards in a row line up. */
+  .portrait-empty {
+    display: grid;
+    place-items: center;
+    font-size: clamp(3rem, 2rem + 3vw, 4.5rem);
+    line-height: 1;
+  }
+
+  .portrait-empty .numeral {
+    transition: transform 0.5s var(--ease-spring);
+  }
+
   .person:hover .portrait img {
     transform: scale(1.04);
   }
 
-  .person:hover .avatar {
+  .person:hover .portrait-empty .numeral {
     transform: rotate(-8deg) scale(1.06);
   }
 
