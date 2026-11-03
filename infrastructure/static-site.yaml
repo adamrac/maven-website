@@ -132,7 +132,7 @@ Resources:
             Condition:
               StringEquals:
                 token.actions.githubusercontent.com:aud: sts.amazonaws.com
-                token.actions.githubusercontent.com:sub: repo:adamrac/maven-website:ref:refs/heads/master
+                token.actions.githubusercontent.com:sub: repo:adamrac@29052445/maven-website@1402443817:ref:refs/heads/master
       Policies:
         - PolicyName: PublishStaticWebsite
           PolicyDocument:

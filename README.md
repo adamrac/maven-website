@@ -97,7 +97,7 @@ Custom-domain certificate and DNS setup are separate from this template.
    allow `sts:AssumeRoleWithWebIdentity` from that provider with both
    `token.actions.githubusercontent.com:aud` equal to `sts.amazonaws.com` and
    `token.actions.githubusercontent.com:sub` equal to
-   `repo:adamrac/maven-website:ref:refs/heads/master`.
+   `repo:adamrac@29052445/maven-website@1402443817:ref:refs/heads/master`.
 4. Give that role `s3:PutObject` on the dedicated bucket's objects,
    `s3:ListBucket` and `s3:GetBucketLocation` on the bucket, and
    `cloudfront:CreateInvalidation` and `cloudfront:GetInvalidation` on the
