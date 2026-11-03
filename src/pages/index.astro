@@ -7,7 +7,6 @@ import Icon from '../components/Icon.astro';
 import Marquee from '../components/Marquee.astro';
 import PhoneDemo from '../components/PhoneDemo.astro';
 import HealthReport from '../components/HealthReport.astro';
-import { APP_STORE_URL, PLAY_STORE_URL, DOWNLOAD_ANCHOR } from '../site';
 
 /*
  * One page, told as a story, in plain words:
@@ -96,8 +95,8 @@ const safety = [
 ];
 
 const stores = [
-  { name: 'App Store', pre: 'Download on the', href: APP_STORE_URL, icon: 'apple' },
-  { name: 'Google Play', pre: 'Get it on', href: PLAY_STORE_URL, icon: 'play' },
+  { name: 'App Store', icon: 'apple' },
+  { name: 'Google Play', icon: 'play' },
 ];
 
 /* Little pieces of the app inside the feature cards */
@@ -403,18 +402,13 @@ const lists = [
           ></span>
       </h2>
       <p class="head-sub dl-lead reveal" style="--delay:300ms">
-        Download Marlo and set it up in a few minutes. Skip anything you’re not ready to answer.
+        Marlo is coming soon to the App Store and Google Play.
       </p>
 
       <div class="stores reveal" style="--delay:450ms">
         {
           stores.map((s) => (
-            <a
-              class="store"
-              href={s.href || DOWNLOAD_ANCHOR}
-              data-magnetic
-              rel={s.href ? 'noopener' : undefined}
-            >
+            <button class="store" type="button" disabled>
               <span class="store-icon" aria-hidden="true">
                 {s.icon === 'apple' ? (
                   <svg viewBox="0 0 24 24">
@@ -430,10 +424,10 @@ const lists = [
                 )}
               </span>
               <span class="store-text">
-                <span class="store-pre">{s.pre}</span>
+                <span class="store-pre">Coming soon</span>
                 <span class="store-name">{s.name}</span>
               </span>
-            </a>
+            </button>
           ))
         }
       </div>
@@ -1103,19 +1097,14 @@ const lists = [
     gap: 0.8rem;
     padding: 0.8rem 1.6rem 0.8rem 1.2rem;
     border-radius: 18px;
-    background: var(--cream);
-    color: var(--berry);
-    text-decoration: none;
+    background: #e2e2e2;
+    color: #666;
+    border: 1px solid #ccc;
+    font: inherit;
+    opacity: 1;
+    cursor: not-allowed;
     text-align: left;
     min-width: 12.5rem;
-  }
-
-  .store:hover {
-    background: var(--paper);
-  }
-
-  .store:hover .store-icon {
-    transform: rotate(-8deg) scale(1.1);
   }
 
   .store-icon {
