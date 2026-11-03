@@ -70,7 +70,8 @@ One-time setup in AWS account `058914804891` (local profile `maven`):
 The reproducible hosting template is `infrastructure/static-site.yaml`. It
 uses the account's existing GitHub OIDC provider and creates a private bucket,
 CloudFront with directory routing, and a role restricted to this repo's
-`master` branch. It uses the CloudFront HTTPS hostname and makes no DNS changes.
+`master` branch. It always supports the CloudFront HTTPS hostname. Set `CertificateArn` to
+attach `marlohealth.com.au`; DNS is managed separately.
 
 ```bash
 aws cloudformation deploy --template-file infrastructure/static-site.yaml \
@@ -82,7 +83,24 @@ aws cloudformation describe-stacks --stack-name marlo-static-website \
 
 Use outputs `RoleArn`, `S3Bucket`, and `DistributionId` for the corresponding
 GitHub variables below. The bucket is retained if the stack is deleted.
-Custom-domain certificate and DNS setup are separate from this template.
+Production uses certificate
+`arn:aws:acm:us-east-1:058914804891:certificate/aaee2bfb-b22c-4231-9bbe-fdc40d0cc624`.
+Pass it when enabling the domain (subsequent `aws cloudformation deploy` calls
+retain existing parameter values when omitted):
+
+```bash
+aws cloudformation deploy --template-file infrastructure/static-site.yaml \
+  --stack-name marlo-static-website --capabilities CAPABILITY_IAM \
+  --parameter-overrides CertificateArn=arn:aws:acm:us-east-1:058914804891:certificate/aaee2bfb-b22c-4231-9bbe-fdc40d0cc624 \
+  --profile maven --region ap-southeast-2
+```
+
+After CloudFront finishes deploying the domain and certificate, apply the
+A/AAAA aliases in `infrastructure/domain-dns.json` with Route 53
+`change-resource-record-sets` to zone `Z06250621XR5RLV5P2TRA`. Keep the ACM
+validation CNAME for automatic renewal. The previous apex A record was
+`199.36.158.100` (TTL 0); rollback requires restoring it and removing the new
+AAAA alias. Other records, including the staging API, are unchanged.
 
 1. Create a dedicated private S3 website content bucket and a CloudFront
    distribution with origin access control. Set the default root object to

@@ -1,5 +1,12 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: Marlo static website and GitHub master deployment role; no DNS changes.
+Description: Marlo static website and GitHub master deployment role; DNS managed separately.
+Parameters:
+  CertificateArn:
+    Type: String
+    Default: ''
+    Description: Optional ACM certificate in us-east-1 for marlohealth.com.au
+Conditions:
+  HasCustomDomain: !Not [!Equals [!Ref CertificateArn, '']]
 Resources:
   SiteBucket:
     Type: AWS::S3::Bucket
@@ -68,8 +75,13 @@ Resources:
         HttpVersion: http2and3
         IPV6Enabled: true
         PriceClass: PriceClass_All
-        ViewerCertificate:
-          CloudFrontDefaultCertificate: true
+        Aliases: !If [HasCustomDomain, [marlohealth.com.au], !Ref 'AWS::NoValue']
+        ViewerCertificate: !If
+          - HasCustomDomain
+          - AcmCertificateArn: !Ref CertificateArn
+            SslSupportMethod: sni-only
+            MinimumProtocolVersion: TLSv1.2_2021
+          - CloudFrontDefaultCertificate: true
         Origins:
           - Id: site
             DomainName: !GetAtt SiteBucket.RegionalDomainName
