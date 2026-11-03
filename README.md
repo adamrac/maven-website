@@ -58,6 +58,57 @@ The reader is a woman who wants help with her health, not a tech person.
 - No eyebrows/overlines above headings, no captions under images.
 - Cards in a row get matching copy lengths so they line up.
 
+## AWS deployment
+
+`.github/workflows/deploy-aws.yml` builds and deploys on pushes to `master`.
+Develop on `staging`, then merge into `master` to release. Staging does not
+deploy automatically. The existing `main` GitHub Pages workflow is unchanged.
+Manual AWS runs also require selecting `master`.
+
+One-time setup in AWS account `058914804891` (local profile `maven`):
+
+1. Create a dedicated private S3 website content bucket and a CloudFront
+   distribution with origin access control. Set the default root object to
+   `index.html`, route extensionless paths such as `/team` and `/team/` to
+   `/team/index.html` with a viewer-request function, and serve `/404.html`
+   with status 404 for missing objects. Use a cache policy with minimum TTL 0
+   so CloudFront respects the HTML cache headers.
+2. For the custom domain, create an ACM certificate in `us-east-1`, attach it
+   and the domain alias to CloudFront, and change DNS when ready to cut over.
+3. Configure GitHub's OIDC provider (`https://token.actions.githubusercontent.com`,
+   audience `sts.amazonaws.com`) and a deployment role. Its trust policy must
+   allow `sts:AssumeRoleWithWebIdentity` from that provider with both
+   `token.actions.githubusercontent.com:aud` equal to `sts.amazonaws.com` and
+   `token.actions.githubusercontent.com:sub` equal to
+   `repo:adamrac/maven-website:ref:refs/heads/master`.
+4. Give that role `s3:PutObject` on the dedicated bucket's objects,
+   `s3:ListBucket` and `s3:GetBucketLocation` on the bucket, and
+   `cloudfront:CreateInvalidation` and `cloudfront:GetInvalidation` on the
+   target distribution. GitHub uses temporary OIDC credentials; it does not
+   use the local AWS profile or require stored AWS access keys.
+
+In GitHub **Settings → Secrets and variables → Actions → Variables**, set:
+
+| Variable | Value |
+| --- | --- |
+| `AWS_ROLE_ARN` | ARN of the deployment role above (required) |
+| `S3_BUCKET` | Dedicated content bucket name (required) |
+| `CLOUDFRONT_DISTRIBUTION_ID` | Distribution ID (required) |
+| `AWS_REGION` | Bucket region; defaults to `ap-southeast-2` |
+| `SITE_URL` | Canonical origin; defaults to `https://marlohealth.com.au` |
+| `PUBLIC_APP_STORE_URL` | Apple app listing URL |
+| `PUBLIC_PLAY_STORE_URL` | Google Play listing URL |
+| `PUBLIC_PARTNER_EMAIL` | Practitioner contact inbox |
+
+Keep the existing `FONT_B64_1`, `FONT_B64_2`, and `FONT_B64_3` repository secrets
+to restore the licensed font. If changing the canonical domain, also update
+the sitemap URL in `public/robots.txt`.
+
+The workflow uploads assets before HTML, retains older objects so cached
+pages can still load their assets, and waits for CloudFront invalidation.
+Removed pages remain in S3 until explicitly cleaned up. Deployment fails
+early with a clear message if required variables are missing.
+
 ## Wiring the download buttons
 
 ```bash

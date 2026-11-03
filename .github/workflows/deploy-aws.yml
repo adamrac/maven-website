@@ -1,0 +1,88 @@
+name: Deploy static website to AWS
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: aws-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    env:
+      AWS_REGION: ${{ vars.AWS_REGION || 'ap-southeast-2' }}
+      AWS_ROLE_ARN: ${{ vars.AWS_ROLE_ARN }}
+      S3_BUCKET: ${{ vars.S3_BUCKET }}
+      CLOUDFRONT_DISTRIBUTION_ID: ${{ vars.CLOUDFRONT_DISTRIBUTION_ID }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate deployment settings
+        shell: bash
+        run: |
+          set -euo pipefail
+          for setting in AWS_ROLE_ARN S3_BUCKET CLOUDFRONT_DISTRIBUTION_ID; do
+            if [ -z "${!setting}" ]; then
+              echo "::error::Set repository variable $setting before deploying (see README.md)."
+              exit 1
+            fi
+          done
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Restore the licensed font
+        env:
+          FONT_B64_1: ${{ secrets.FONT_B64_1 }}
+          FONT_B64_2: ${{ secrets.FONT_B64_2 }}
+          FONT_B64_3: ${{ secrets.FONT_B64_3 }}
+        run: |
+          if [ -n "$FONT_B64_1" ]; then
+            mkdir -p public/fonts
+            printf '%s%s%s' "$FONT_B64_1" "$FONT_B64_2" "$FONT_B64_3" | base64 -d > public/fonts/Aloevera-Regular.ttf
+          else
+            echo "::warning::Font secrets not set; building with the fallback font."
+          fi
+
+      - name: Build static website
+        run: npm run build
+        env:
+          ASTRO_TELEMETRY_DISABLED: '1'
+          SITE_URL: ${{ vars.SITE_URL || 'https://marlohealth.com.au' }}
+          BASE_PATH: /
+          PUBLIC_APP_STORE_URL: ${{ vars.PUBLIC_APP_STORE_URL }}
+          PUBLIC_PLAY_STORE_URL: ${{ vars.PUBLIC_PLAY_STORE_URL }}
+          PUBLIC_PARTNER_EMAIL: ${{ vars.PUBLIC_PARTNER_EMAIL }}
+
+      - name: Authenticate to AWS
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+          allowed-account-ids: '058914804891'
+
+      - name: Upload assets, then pages
+        shell: bash
+        run: |
+          set -euo pipefail
+          aws s3 cp dist/ "s3://$S3_BUCKET/" --recursive --exclude '*.html' --cache-control 'public,max-age=300' --only-show-errors
+          aws s3 cp dist/ "s3://$S3_BUCKET/" --recursive --exclude '*' --include '*.html' --cache-control 'public,max-age=0,must-revalidate' --only-show-errors
+
+      - name: Refresh CloudFront cache
+        shell: bash
+        run: |
+          set -euo pipefail
+          invalidation_id=$(aws cloudfront create-invalidation --distribution-id "$CLOUDFRONT_DISTRIBUTION_ID" --paths '/*' --query 'Invalidation.Id' --output text)
+          aws cloudfront wait invalidation-completed --distribution-id "$CLOUDFRONT_DISTRIBUTION_ID" --id "$invalidation_id"
