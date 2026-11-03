@@ -285,7 +285,7 @@ function initProgress() {
 
 /* ------------------------------------------------------------- download */
 
-/** On a phone, send "Download the app" straight to the right store. */
+/** On a phone, send "Coming Soon" straight to the right store. */
 function initDownloadLinks() {
   const ua = navigator.userAgent;
   const ios = /iPhone|iPad|iPod/i.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);

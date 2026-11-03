@@ -5,7 +5,7 @@
  *   PUBLIC_APP_STORE_URL=https://apps.apple.com/au/app/...
  *   PUBLIC_PLAY_STORE_URL=https://play.google.com/store/apps/details?id=...
  *
- * Every "Download the app" button points at #download (the store badges at the
+ * Every "Coming Soon" button points at #download (the store badges at the
  * bottom of the page). On a phone, motion.ts rewrites those buttons to go
  * straight to the right store, when that store's URL is set.
  */
