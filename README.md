@@ -67,6 +67,23 @@ Manual AWS runs also require selecting `master`.
 
 One-time setup in AWS account `058914804891` (local profile `maven`):
 
+The reproducible hosting template is `infrastructure/static-site.yaml`. It
+uses the account's existing GitHub OIDC provider and creates a private bucket,
+CloudFront with directory routing, and a role restricted to this repo's
+`master` branch. It uses the CloudFront HTTPS hostname and makes no DNS changes.
+
+```bash
+aws cloudformation deploy --template-file infrastructure/static-site.yaml \
+  --stack-name marlo-static-website --capabilities CAPABILITY_IAM \
+  --profile maven --region ap-southeast-2
+aws cloudformation describe-stacks --stack-name marlo-static-website \
+  --profile maven --region ap-southeast-2 --query 'Stacks[0].Outputs'
+```
+
+Use outputs `RoleArn`, `S3Bucket`, and `DistributionId` for the corresponding
+GitHub variables below. The bucket is retained if the stack is deleted.
+Custom-domain certificate and DNS setup are separate from this template.
+
 1. Create a dedicated private S3 website content bucket and a CloudFront
    distribution with origin access control. Set the default root object to
    `index.html`, route extensionless paths such as `/team` and `/team/` to
