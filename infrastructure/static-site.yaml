@@ -4,7 +4,7 @@ Parameters:
   CertificateArn:
     Type: String
     Default: ''
-    Description: Optional ACM certificate in us-east-1 covering apex and www
+    Description: Optional ACM certificate in us-east-1 covering marlohealth.com.au, marlohealth.au and both www names
 Conditions:
   HasCustomDomain: !Not [!Equals [!Ref CertificateArn, '']]
 Resources:
@@ -44,7 +44,7 @@ Resources:
       FunctionCode: |
         function handler(event) {
           var request = event.request;
-          if (request.headers.host.value === 'www.marlohealth.com.au') {
+          if (['www.marlohealth.com.au', 'marlohealth.au', 'www.marlohealth.au'].indexOf(request.headers.host.value) !== -1) {
             var parts = [];
             var query = request.querystring;
             Object.keys(query).forEach(function (key) {
@@ -92,7 +92,7 @@ Resources:
         HttpVersion: http2and3
         IPV6Enabled: true
         PriceClass: PriceClass_All
-        Aliases: !If [HasCustomDomain, [marlohealth.com.au, www.marlohealth.com.au], !Ref 'AWS::NoValue']
+        Aliases: !If [HasCustomDomain, [marlohealth.com.au, www.marlohealth.com.au, marlohealth.au, www.marlohealth.au], !Ref 'AWS::NoValue']
         ViewerCertificate: !If
           - HasCustomDomain
           - AcmCertificateArn: !Ref CertificateArn

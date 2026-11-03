@@ -86,14 +86,14 @@ aws cloudformation describe-stacks --stack-name marlo-static-website \
 Use outputs `RoleArn`, `S3Bucket`, and `DistributionId` for the corresponding
 GitHub variables below. The bucket is retained if the stack is deleted.
 Production uses certificate
-`arn:aws:acm:us-east-1:058914804891:certificate/4f388d37-2dc0-4797-8b3f-05e8edcaa4dc`.
+`arn:aws:acm:us-east-1:058914804891:certificate/17e4be15-5b1b-472c-934b-21ce962c72d5`.
 Pass it when enabling the domain (subsequent `aws cloudformation deploy` calls
 retain existing parameter values when omitted):
 
 ```bash
 aws cloudformation deploy --template-file infrastructure/static-site.yaml \
   --stack-name marlo-static-website --capabilities CAPABILITY_IAM \
-  --parameter-overrides CertificateArn=arn:aws:acm:us-east-1:058914804891:certificate/4f388d37-2dc0-4797-8b3f-05e8edcaa4dc \
+  --parameter-overrides CertificateArn=arn:aws:acm:us-east-1:058914804891:certificate/17e4be15-5b1b-472c-934b-21ce962c72d5 \
   --profile maven --region ap-southeast-2
 ```
 
@@ -189,3 +189,10 @@ face is Aloevera (self-hosted, single weight); body text is Karla.
   These should be checked by the Clinical Lead before launch.
 - **Legal pages.** No privacy policy or terms yet.
 - **OG image.** `og:image` isn't set.
+
+The additional domains `marlohealth.au` and `www.marlohealth.au` also return
+301 redirects to `https://marlohealth.com.au`, preserving paths and query
+parameters. Their A/AAAA aliases are in `infrastructure/redirect-domain-dns.json`
+and belong to hosted zone `Z03895033FPFC0YAE4YHV`. Apply these only after the
+CloudFront certificate and aliases finish deploying. Keep all certificate
+validation CNAME records for renewal.
