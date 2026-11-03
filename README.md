@@ -71,7 +71,9 @@ The reproducible hosting template is `infrastructure/static-site.yaml`. It
 uses the account's existing GitHub OIDC provider and creates a private bucket,
 CloudFront with directory routing, and a role restricted to this repo's
 `master` branch. It always supports the CloudFront HTTPS hostname. Set `CertificateArn` to
-attach `marlohealth.com.au`; DNS is managed separately.
+attach `marlohealth.com.au` and `www.marlohealth.com.au`; DNS is managed separately.
+CloudFront returns a permanent 301 redirect from www to the HTTPS apex,
+preserving paths and query parameters before applying directory-index rewrites.
 
 ```bash
 aws cloudformation deploy --template-file infrastructure/static-site.yaml \
@@ -84,14 +86,14 @@ aws cloudformation describe-stacks --stack-name marlo-static-website \
 Use outputs `RoleArn`, `S3Bucket`, and `DistributionId` for the corresponding
 GitHub variables below. The bucket is retained if the stack is deleted.
 Production uses certificate
-`arn:aws:acm:us-east-1:058914804891:certificate/aaee2bfb-b22c-4231-9bbe-fdc40d0cc624`.
+`arn:aws:acm:us-east-1:058914804891:certificate/4f388d37-2dc0-4797-8b3f-05e8edcaa4dc`.
 Pass it when enabling the domain (subsequent `aws cloudformation deploy` calls
 retain existing parameter values when omitted):
 
 ```bash
 aws cloudformation deploy --template-file infrastructure/static-site.yaml \
   --stack-name marlo-static-website --capabilities CAPABILITY_IAM \
-  --parameter-overrides CertificateArn=arn:aws:acm:us-east-1:058914804891:certificate/aaee2bfb-b22c-4231-9bbe-fdc40d0cc624 \
+  --parameter-overrides CertificateArn=arn:aws:acm:us-east-1:058914804891:certificate/4f388d37-2dc0-4797-8b3f-05e8edcaa4dc \
   --profile maven --region ap-southeast-2
 ```
 
